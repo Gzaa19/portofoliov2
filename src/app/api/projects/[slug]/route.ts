@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
 interface Params {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 // GET single project by slug

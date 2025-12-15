@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
 interface Params {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 // GET single location by id
