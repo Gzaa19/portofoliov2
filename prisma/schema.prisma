@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// Project Model - Untuk menyimpan data project
+// ==========================================
+model Project {
+  id          String   @id @default(cuid())
+  slug        String   @unique // URL-friendly ID (e.g., "ecommerce-platform")
+  title       String
+  description String   @db.Text
+  link        String? // Live demo URL (optional)
+  github      String? // GitHub repository URL (optional)
+  image       String? // Project image URL (optional)
+  featured    Boolean  @default(false) // Untuk menandai project unggulan
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relasi ke tags
+  tags ProjectTag[]
+
+  @@map("projects")
+}
+
+// ==========================================
+// Tag Model - Untuk menyimpan tech stack tags
+// ==========================================
+model Tag {
+  id    String  @id @default(cuid())
+  name  String  @unique // e.g., "Next.js", "React", "TypeScript"
+  slug  String  @unique // URL-friendly version
+  color String? // Optional hex color for the tag
+
+  // Relasi ke projects
+  projects ProjectTag[]
+
+  @@map("tags")
+}
+
+// ==========================================
+// Junction table untuk relasi many-to-many Project <-> Tag
+// ==========================================
+model ProjectTag {
+  projectId String
+  tagId     String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, tagId])
+  @@map("project_tags")
+}
+
+// ==========================================
+// SocialLink Model - Untuk menyimpan social links
+// ==========================================
+model SocialLink {
+  id          String   @id @default(cuid())
+  name        String // e.g., "GitHub", "LinkedIn"
+  username    String // e.g., "@Gzaa19"
+  description String?
+  url         String
+  iconName    String // Reference to icon component
+  iconBg      String? // CSS class for background
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("social_links")
+}
+
+// ==========================================
+// Admin Model - Untuk menyimpan kredensial admin
+// ==========================================
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String // Hashed password
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+// ==========================================
+// Location Model - Untuk menyimpan lokasi dengan koordinat
+// Hanya boleh ada 1 lokasi aktif pada satu waktu
+// ==========================================
+model Location {
+  id        String   @id @default(cuid())
+  name      String // Nama lokasi (e.g., "Jakarta, Indonesia")
+  address   String? // Alamat lengkap
+  latitude  Float // Koordinat latitude
+  longitude Float // Koordinat longitude
+  zoom      Int      @default(12) // Zoom level untuk map
+  isActive  Boolean  @default(true) // Hanya 1 yang boleh aktif
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("locations")
+}
