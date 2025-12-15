@@ -1,227 +1,28 @@
-"use client";
+import prisma from "@/lib/prisma";
+import { DashboardManager } from "@/components/admin";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { IconType } from "react-icons";
-import {
-    MdFolder,
-    MdLocalOffer,
-    MdLink,
-    MdLocationOn,
-    MdAdd,
-    MdLightbulb,
-    MdChevronRight
-} from "react-icons/md";
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-interface Stats {
-    projects: number;
-    tags: number;
-    socialLinks: number;
-    hasLocation: boolean;
-    locationName?: string;
+async function getStats() {
+    const [projectCount, tagCount, socialLinkCount, location] = await Promise.all([
+        prisma.project.count(),
+        prisma.tag.count(),
+        prisma.socialLink.count(),
+        prisma.location.findFirst({ where: { isActive: true } }),
+    ]);
+
+    return {
+        projects: projectCount,
+        tags: tagCount,
+        socialLinks: socialLinkCount,
+        hasLocation: !!location,
+        locationName: location?.name,
+    };
 }
 
-interface StatCard {
-    title: string;
-    value: number;
-    icon: IconType;
-    iconColor: string;
-    iconBg: string;
-    href: string;
-}
+export default async function AdminDashboard() {
+    const stats = await getStats();
 
-export default function AdminDashboard() {
-    const [stats, setStats] = useState<Stats>({
-        projects: 0,
-        tags: 0,
-        socialLinks: 0,
-        hasLocation: false
-    });
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const [projectsRes, tagsRes, socialLinksRes, locationRes] = await Promise.all([
-                    fetch("/api/projects"),
-                    fetch("/api/tags"),
-                    fetch("/api/social-links"),
-                    fetch("/api/location"),
-                ]);
-
-                const projects = await projectsRes.json();
-                const tags = await tagsRes.json();
-                const socialLinks = await socialLinksRes.json();
-                const location = await locationRes.json();
-
-                setStats({
-                    projects: Array.isArray(projects) ? projects.length : 0,
-                    tags: Array.isArray(tags) ? tags.length : 0,
-                    socialLinks: Array.isArray(socialLinks) ? socialLinks.length : 0,
-                    hasLocation: !!location,
-                    locationName: location?.name,
-                });
-            } catch (error) {
-                console.error("Failed to fetch stats:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchStats();
-    }, []);
-
-    const statCards: StatCard[] = [
-        {
-            title: "Total Projects",
-            value: stats.projects,
-            icon: MdFolder,
-            iconColor: "text-amber-400",
-            iconBg: "bg-amber-500/20",
-            href: "/admin/projects",
-        },
-        {
-            title: "Total Tags",
-            value: stats.tags,
-            icon: MdLocalOffer,
-            iconColor: "text-blue-400",
-            iconBg: "bg-blue-500/20",
-            href: "/admin/projects",
-        },
-        {
-            title: "Social Links",
-            value: stats.socialLinks,
-            icon: MdLink,
-            iconColor: "text-purple-400",
-            iconBg: "bg-purple-500/20",
-            href: "/admin/social-links",
-        },
-    ];
-
-    return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-                <p className="text-white/50">Selamat datang di Admin Panel</p>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {statCards.map((card) => {
-                    const Icon = card.icon;
-                    return (
-                        <Link
-                            key={card.title}
-                            href={card.href}
-                            className="group bg-gray-800/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300"
-                        >
-                            <div className="flex items-center justify-between mb-4">
-                                <div className={`p-3 rounded-xl ${card.iconBg}`}>
-                                    <Icon className={`w-8 h-8 ${card.iconColor}`} />
-                                </div>
-                                <div className="px-3 py-1 rounded-full bg-emerald-500 text-gray-900 text-xs font-semibold">
-                                    View All
-                                </div>
-                            </div>
-                            <div className="text-3xl font-bold text-white mb-1">
-                                {isLoading ? "..." : card.value}
-                            </div>
-                            <div className="text-white/50 text-sm">{card.title}</div>
-                        </Link>
-                    );
-                })}
-            </div>
-
-            {/* Location Status Card */}
-            <Link
-                href="/admin/location"
-                className="block bg-gray-800/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300"
-            >
-                <div className="flex items-center gap-4">
-                    <div className="p-4 bg-rose-500/20 rounded-2xl">
-                        <MdLocationOn className="w-8 h-8 text-rose-400" />
-                    </div>
-                    <div className="flex-1">
-                        <h3 className="text-lg font-bold text-white mb-1">Location</h3>
-                        {isLoading ? (
-                            <p className="text-white/50 text-sm">Loading...</p>
-                        ) : stats.hasLocation ? (
-                            <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                                <span className="text-emerald-400 text-sm">{stats.locationName}</span>
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-yellow-400" />
-                                <span className="text-yellow-400 text-sm">Not configured</span>
-                            </div>
-                        )}
-                    </div>
-                    <div className="text-white/30">
-                        <MdChevronRight className="w-6 h-6" />
-                    </div>
-                </div>
-            </Link>
-
-            {/* Quick Actions */}
-            <div className="bg-gray-800/50 backdrop-blur-md border border-white/10 rounded-2xl p-6">
-                <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Link
-                        href="/admin/projects?action=create"
-                        className="flex items-center gap-4 p-4 bg-gray-900/50 rounded-xl border border-white/10 hover:border-emerald-500/30 transition-all duration-300"
-                    >
-                        <div className="p-3 bg-emerald-500/20 rounded-xl">
-                            <MdAdd className="w-6 h-6 text-emerald-400" />
-                        </div>
-                        <div>
-                            <div className="text-white font-medium">Add New Project</div>
-                            <div className="text-white/50 text-sm">Create a new project entry</div>
-                        </div>
-                    </Link>
-                    <Link
-                        href="/admin/social-links?action=create"
-                        className="flex items-center gap-4 p-4 bg-gray-900/50 rounded-xl border border-white/10 hover:border-purple-500/30 transition-all duration-300"
-                    >
-                        <div className="p-3 bg-purple-500/20 rounded-xl">
-                            <MdLink className="w-6 h-6 text-purple-400" />
-                        </div>
-                        <div>
-                            <div className="text-white font-medium">Add Social Link</div>
-                            <div className="text-white/50 text-sm">Add a new social media link</div>
-                        </div>
-                    </Link>
-                    <Link
-                        href="/admin/location"
-                        className="flex items-center gap-4 p-4 bg-gray-900/50 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300"
-                    >
-                        <div className="p-3 bg-cyan-500/20 rounded-xl">
-                            <MdLocationOn className="w-6 h-6 text-cyan-400" />
-                        </div>
-                        <div>
-                            <div className="text-white font-medium">Set Location</div>
-                            <div className="text-white/50 text-sm">Configure map location</div>
-                        </div>
-                    </Link>
-                </div>
-            </div>
-
-            {/* Info Card */}
-            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6">
-                <div className="flex items-start gap-4">
-                    <div className="p-2 bg-yellow-500/20 rounded-xl">
-                        <MdLightbulb className="w-6 h-6 text-yellow-400" />
-                    </div>
-                    <div>
-                        <h3 className="text-white font-semibold mb-1">Tips</h3>
-                        <p className="text-white/70 text-sm">
-                            Gunakan panel ini untuk mengelola projects, social links, dan lokasi.
-                            Semua perubahan akan langsung tersimpan ke database dan tampil di website.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+    return <DashboardManager initialStats={stats} />;
 }
