@@ -110,8 +110,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                                        : "text-white/70 hover:text-white hover:bg-white/10"
+                                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                    : "text-white/70 hover:text-white hover:bg-white/10"
                                     }`}
                             >
                                 <Icon size={20} />

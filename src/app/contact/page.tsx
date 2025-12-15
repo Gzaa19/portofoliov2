@@ -12,6 +12,9 @@ import {
 import { SectionCard } from "@/components/SectionCard";
 import prisma from "@/lib/prisma";
 
+
+export const revalidate = 60;
+
 // Map iconName to actual component
 const iconMap: Record<string, React.ComponentType> = {
     GitHubIcon,

@@ -26,7 +26,7 @@ export const MapCard = ({ className = "" }: MapCardProps) => {
     useEffect(() => {
         const fetchLocation = async () => {
             try {
-                const res = await fetch("/api/location");
+                const res = await fetch("/api/location", { cache: 'no-store' });
                 const data = await res.json();
                 setLocation(data);
             } catch (error) {

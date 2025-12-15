@@ -2,6 +2,9 @@ import { motion } from "framer-motion";
 import ProjectCard from "@/components/ProjectCard";
 import prisma from "@/lib/prisma";
 
+
+export const revalidate = 60;
+
 // Fetch projects from database
 async function getProjects() {
     const projects = await prisma.project.findMany({

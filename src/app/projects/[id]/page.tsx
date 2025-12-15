@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { TechStackIcon } from "@/components/TechStackIcon";
 
+
+export const revalidate = 60;
+
 interface Props {
     params: Promise<{
         id: string;
