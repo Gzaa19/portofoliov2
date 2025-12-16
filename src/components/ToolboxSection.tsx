@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui";
 import { SectionCard } from "@/components/SectionCard";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
 
-interface ToolboxItem {
+export interface ToolboxItem {
     id: string;
     name: string;
     iconName: string;
@@ -16,54 +14,25 @@ interface ToolboxItem {
     order: number;
 }
 
-interface ToolboxCategory {
+export interface ToolboxCategory {
     id: string;
     name: string;
     order: number;
     items: ToolboxItem[];
 }
 
+interface ToolboxSectionProps {
+    categories?: ToolboxCategory[];
+}
+
 /**
  * ToolboxSection - Displays tech stack organized by categories
  */
-export function ToolboxSection() {
-    const [categories, setCategories] = useState<ToolboxCategory[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchToolbox = async () => {
-            try {
-                const res = await fetch("/api/toolbox", { cache: 'no-store' });
-                const data = await res.json();
-                setCategories(Array.isArray(data) ? data : []);
-            } catch (error) {
-                console.error("Failed to fetch toolbox:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchToolbox();
-    }, []);
-
+export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
     const getIcon = (iconName: string): IconType | null => {
         const icons = SiIcons as Record<string, IconType>;
         return icons[iconName] || null;
     };
-
-    if (isLoading) {
-        return (
-            <section id="tech-stack" className="py-16 lg:py-24">
-                <div className="container mx-auto px-4">
-                    <SectionCard className="p-8 md:p-12">
-                        <div className="flex items-center justify-center py-20">
-                            <Skeleton className="h-8 w-48" />
-                        </div>
-                    </SectionCard>
-                </div>
-            </section>
-        );
-    }
 
     if (categories.length === 0) {
         return null;

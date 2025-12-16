@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { LocationManager } from "@/components/admin";
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 3600;
 
 async function getLocation() {
     const location = await prisma.location.findFirst({

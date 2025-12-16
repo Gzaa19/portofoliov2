@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { TechStackIcon } from "@/components/TechStackIcon";
 
 
-export const revalidate = 0;
+export const revalidate = 3600;
 
 interface Props {
     params: Promise<{

@@ -149,3 +149,18 @@ model ToolboxItem {
 
   @@map("toolbox_items")
 }
+
+// ==========================================
+// Profile Model - Untuk menyimpan data "About Me"
+// ==========================================
+model Profile {
+  id          String   @id @default(cuid())
+  description String   @db.Text
+  photoUrl    String // URL foto profil
+  resumeUrl   String // URL resume PDF
+  isActive    Boolean  @default(true) // Hanya 1 yang aktif
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("profiles")
+}

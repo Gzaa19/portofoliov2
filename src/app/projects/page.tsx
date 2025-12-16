@@ -2,9 +2,7 @@ import ProjectCard from "@/components/ProjectCard";
 import prisma from "@/lib/prisma";
 import AntigravityWrapper from "@/components/AntigravityWrapper";
 
-
-export const revalidate = 0;
-
+export const revalidate = 3600;
 // Fetch projects from database
 async function getProjects() {
     const projects = await prisma.project.findMany({
@@ -30,7 +28,7 @@ export default async function ProjectsPage() {
         <div className="min-h-screen py-32 px-4 relative">
             {/* Antigravity Particles */}
             <AntigravityWrapper
-                count={3000}
+                count={800}
                 magnetRadius={18}
                 ringRadius={12}
                 waveSpeed={0.3}
@@ -42,9 +40,9 @@ export default async function ProjectsPage() {
                 particleVariance={2}
             />
 
-            <div className="container mx-auto max-w-6xl relative z-10">
+            <div className="container mx-auto max-w-6xl relative z-10 pointer-events-none">
                 {/* Header Section */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-16 pointer-events-auto">
                     <h1 className="section-title mb-6">
                         My Projects
                     </h1>
@@ -55,7 +53,7 @@ export default async function ProjectsPage() {
                 </div>
 
                 {/* Projects Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 pointer-events-auto">
                     {projects.map((project) => (
                         <div key={project.id} className="h-full">
                             <ProjectCard

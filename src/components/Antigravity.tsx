@@ -190,7 +190,7 @@ const AntigravityInner: React.FC<AntigravityProps> = ({
             {particleShape === 'sphere' && <sphereGeometry args={[0.1, 8, 8]} />}
             {particleShape === 'box' && <boxGeometry args={[0.15, 0.15, 0.15]} />}
             {particleShape === 'tetrahedron' && <tetrahedronGeometry args={[0.2, 0]} />}
-            <meshBasicMaterial color={color} transparent opacity={0.6} side={THREE.DoubleSide} />
+            <meshBasicMaterial color={color} transparent opacity={0.85} side={THREE.DoubleSide} />
         </instancedMesh>
     );
 };

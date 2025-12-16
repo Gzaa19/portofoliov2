@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
 import { techStackOptions } from "@/lib/techStackOptions";
+import { MdSearch, MdClose } from "react-icons/md";
 
 export interface ToolboxItem {
     id: string;
@@ -27,6 +28,9 @@ interface ToolboxManagerProps {
     initialCategories: ToolboxCategory[];
 }
 
+// Get all Si icon names from the library
+const allSiIconNames = Object.keys(SiIcons).filter(key => key.startsWith('Si'));
+
 export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
     const [categories, setCategories] = useState<ToolboxCategory[]>(initialCategories);
     const [isLoading, setIsLoading] = useState(false);
@@ -37,11 +41,22 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
     const [categoryForm, setCategoryForm] = useState({ name: "", order: 0 });
     const [itemForm, setItemForm] = useState({ name: "", iconName: "", color: "#FFFFFF", order: 0, categoryId: "" });
+    const [iconSearch, setIconSearch] = useState("");
+    const [showIconSearch, setShowIconSearch] = useState(false);
 
     const getIcon = (iconName: string): IconType | null => {
         const icons = SiIcons as Record<string, IconType>;
         return icons[iconName] || null;
     };
+
+    // Filter icons based on search query
+    const filteredIcons = useMemo(() => {
+        if (!iconSearch.trim()) return [];
+        const query = iconSearch.toLowerCase();
+        return allSiIconNames
+            .filter(name => name.toLowerCase().includes(query))
+            .slice(0, 50); // Limit to 50 results for performance
+    }, [iconSearch]);
 
     const fetchCategories = async () => {
         setIsLoading(true);
@@ -100,6 +115,8 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
         setSelectedCategoryId(categoryId);
         const cat = categories.find(c => c.id === categoryId);
         setItemForm({ name: "", iconName: "", color: "#FFFFFF", order: cat?.items.length || 0, categoryId });
+        setIconSearch("");
+        setShowIconSearch(false);
         setIsItemModalOpen(true);
     };
 
@@ -107,6 +124,8 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
         setEditingItem(item);
         setSelectedCategoryId(item.categoryId);
         setItemForm({ name: item.name, iconName: item.iconName, color: item.color, order: item.order, categoryId: item.categoryId });
+        setIconSearch("");
+        setShowIconSearch(false);
         setIsItemModalOpen(true);
     };
 
@@ -137,6 +156,15 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
 
     const selectTechStack = (tech: typeof techStackOptions[0]) => {
         setItemForm({ ...itemForm, name: tech.name, iconName: tech.icon, color: tech.color });
+        setShowIconSearch(false);
+        setIconSearch("");
+    };
+
+    const selectSearchedIcon = (iconName: string) => {
+        // Try to extract a readable name from the icon name (e.g., SiReact -> React)
+        const readableName = iconName.replace(/^Si/, '').replace(/([A-Z])/g, ' $1').trim();
+        setItemForm({ ...itemForm, iconName, name: itemForm.name || readableName });
+        setIconSearch("");
     };
 
     return (
@@ -146,7 +174,7 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
                     <h1 className="text-3xl font-bold text-white mb-2">Toolbox</h1>
                     <p className="text-white/50">Kelola tech stack yang ditampilkan di About page</p>
                 </div>
-                <button onClick={openAddCategory} className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all">+ Add Category</button>
+                <button onClick={openAddCategory} className="px-4 py-2 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all">+ Add Category</button>
             </div>
 
             {isLoading ? (
@@ -156,7 +184,7 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
                     <div className="text-6xl mb-4">🧰</div>
                     <h3 className="text-xl font-bold text-white mb-2">Belum ada kategori</h3>
                     <p className="text-white/50 mb-6">Tambahkan kategori untuk mulai mengatur toolbox</p>
-                    <button onClick={openAddCategory} className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl">+ Add Category</button>
+                    <button onClick={openAddCategory} className="px-6 py-3 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl">+ Add Category</button>
                 </div>
             ) : (
                 <div className="space-y-6">
@@ -218,7 +246,7 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
                             </div>
                             <div className="flex justify-end gap-3 pt-4">
                                 <button type="button" onClick={() => setIsCategoryModalOpen(false)} className="px-4 py-2 text-white/70 hover:text-white transition-colors">Cancel</button>
-                                <button type="submit" className="px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl">{editingCategory ? "Update" : "Create"}</button>
+                                <button type="submit" className="px-6 py-2 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl">{editingCategory ? "Update" : "Create"}</button>
                             </div>
                         </form>
                     </div>
@@ -233,24 +261,99 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
                             <h2 className="text-xl font-bold text-white">{editingItem ? "Edit Item" : "Add Item"}</h2>
                         </div>
                         <form onSubmit={handleItemSubmit} className="p-6 space-y-4">
+                            {/* Tab Toggle */}
+                            <div className="flex gap-2 mb-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowIconSearch(false)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${!showIconSearch ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' : 'bg-gray-900/50 text-white/50 border border-transparent hover:bg-gray-800'}`}
+                                >
+                                    Quick Select
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowIconSearch(true)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${showIconSearch ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' : 'bg-gray-900/50 text-white/50 border border-transparent hover:bg-gray-800'}`}
+                                >
+                                    <MdSearch /> Search All Icons
+                                </button>
+                            </div>
+
                             {/* Quick Select from Tech Stack */}
-                            <div>
-                                <label className="block text-sm font-medium text-white/70 mb-2">Quick Select</label>
-                                <div className="bg-gray-900/50 border border-white/10 rounded-xl p-3 max-h-48 overflow-y-auto">
-                                    <div className="grid grid-cols-4 gap-2">
-                                        {techStackOptions.map((tech) => {
-                                            const IconComp = getIcon(tech.icon);
-                                            const isSelected = itemForm.iconName === tech.icon;
-                                            return (
-                                                <button key={tech.slug} type="button" onClick={() => selectTechStack(tech)} className={`flex items-center gap-2 p-2 rounded-lg transition-all ${isSelected ? "bg-emerald-500/20 border border-emerald-500/50" : "bg-gray-800/50 border border-transparent hover:bg-gray-700/50"}`}>
-                                                    {IconComp && <IconComp className="w-4 h-4 shrink-0" style={{ color: tech.color }} />}
-                                                    <span className={`text-xs truncate ${isSelected ? "text-emerald-300" : "text-white/70"}`}>{tech.name}</span>
-                                                </button>
-                                            );
-                                        })}
+                            {!showIconSearch && (
+                                <div>
+                                    <label className="block text-sm font-medium text-white/70 mb-2">Quick Select</label>
+                                    <div className="bg-gray-900/50 border border-white/10 rounded-xl p-3 max-h-48 overflow-y-auto">
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {techStackOptions.map((tech) => {
+                                                const IconComp = getIcon(tech.icon);
+                                                const isSelected = itemForm.iconName === tech.icon;
+                                                return (
+                                                    <button key={tech.slug} type="button" onClick={() => selectTechStack(tech)} className={`flex items-center gap-2 p-2 rounded-lg transition-all ${isSelected ? "bg-emerald-500/20 border border-emerald-500/50" : "bg-gray-800/50 border border-transparent hover:bg-gray-700/50"}`}>
+                                                        {IconComp && <IconComp className="w-4 h-4 shrink-0" style={{ color: tech.color }} />}
+                                                        <span className={`text-xs truncate ${isSelected ? "text-emerald-300" : "text-white/70"}`}>{tech.name}</span>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {/* Icon Search */}
+                            {showIconSearch && (
+                                <div>
+                                    <label className="block text-sm font-medium text-white/70 mb-2">Search Icons ({allSiIconNames.length} available)</label>
+                                    <div className="relative mb-3">
+                                        <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-lg" />
+                                        <input
+                                            type="text"
+                                            value={iconSearch}
+                                            onChange={(e) => setIconSearch(e.target.value)}
+                                            className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
+                                            placeholder="Type to search... (e.g., 'flutter', 'aws', 'docker')"
+                                        />
+                                        {iconSearch && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setIconSearch("")}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                                            >
+                                                <MdClose />
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="bg-gray-900/50 border border-white/10 rounded-xl p-3 min-h-[120px] max-h-48 overflow-y-auto">
+                                        {iconSearch.length === 0 ? (
+                                            <p className="text-white/30 text-sm text-center py-8">Ketik nama icon untuk mencari...</p>
+                                        ) : filteredIcons.length === 0 ? (
+                                            <p className="text-white/30 text-sm text-center py-8">Tidak ditemukan icon &quot;{iconSearch}&quot;</p>
+                                        ) : (
+                                            <div className="grid grid-cols-4 gap-2">
+                                                {filteredIcons.map((iconName) => {
+                                                    const IconComp = getIcon(iconName);
+                                                    const isSelected = itemForm.iconName === iconName;
+                                                    return (
+                                                        <button
+                                                            key={iconName}
+                                                            type="button"
+                                                            onClick={() => selectSearchedIcon(iconName)}
+                                                            className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-all ${isSelected ? "bg-emerald-500/20 border border-emerald-500/50" : "bg-gray-800/50 border border-transparent hover:bg-gray-700/50"}`}
+                                                        >
+                                                            {IconComp && <IconComp className="w-6 h-6" style={{ color: itemForm.color }} />}
+                                                            <span className={`text-[10px] truncate w-full text-center ${isSelected ? "text-emerald-300" : "text-white/50"}`}>{iconName.replace('Si', '')}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                        {filteredIcons.length === 50 && (
+                                            <p className="text-white/30 text-xs text-center mt-2">Showing first 50 results. Type more to narrow down.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-white/70 mb-2">Name</label>
@@ -284,7 +387,7 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
                             )}
                             <div className="flex justify-end gap-3 pt-4">
                                 <button type="button" onClick={() => setIsItemModalOpen(false)} className="px-4 py-2 text-white/70 hover:text-white transition-colors">Cancel</button>
-                                <button type="submit" className="px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl">{editingItem ? "Update" : "Create"}</button>
+                                <button type="submit" className="px-6 py-2 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl">{editingItem ? "Update" : "Create"}</button>
                             </div>
                         </form>
                     </div>
@@ -293,3 +396,4 @@ export function ToolboxManager({ initialCategories }: ToolboxManagerProps) {
         </div>
     );
 }
+

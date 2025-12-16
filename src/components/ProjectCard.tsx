@@ -30,7 +30,7 @@ export function ProjectCard({
     return (
         <div
             className={cn(
-                "group relative h-full flex flex-col rounded-3xl bg-white border border-gray-200 overflow-hidden shadow-sm",
+                "group relative h-full flex flex-col rounded-3xl bg-white border border-gray-200 overflow-hidden shadow-sm cq-container",
                 "hover:shadow-lg transition-all duration-300 hover:-translate-y-2 animate-fade-in-up",
                 className
             )}

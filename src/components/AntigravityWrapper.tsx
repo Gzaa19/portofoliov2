@@ -38,7 +38,7 @@ export function AntigravityWrapper({
     className,
 }: AntigravityWrapperProps) {
     return (
-        <div className={cn("absolute inset-0 z-0", className)}>
+        <div className={cn("antigravity-container", className)}>
             <Antigravity
                 count={count}
                 magnetRadius={magnetRadius}

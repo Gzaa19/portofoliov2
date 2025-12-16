@@ -30,6 +30,29 @@ export async function uploadImage(base64Data: string, folder: string = 'portfoli
     }
 }
 
+// Upload any file (image or raw like PDF)
+export async function uploadFile(base64Data: string, folder: string = 'portfolio', resourceType: 'image' | 'raw' = 'image') {
+    try {
+        const result = await cloudinary.uploader.upload(base64Data, {
+            folder,
+            resource_type: resourceType,
+            ...(resourceType === 'image' && {
+                transformation: [
+                    { quality: 'auto:good' },
+                    { fetch_format: 'auto' },
+                ],
+            }),
+        });
+        return {
+            url: result.secure_url,
+            publicId: result.public_id,
+        };
+    } catch (error) {
+        console.error('Cloudinary upload error:', error);
+        throw error;
+    }
+}
+
 // Delete image by public ID
 export async function deleteImage(publicId: string) {
     try {

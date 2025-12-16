@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { techStackOptions } from "@/lib/techStackOptions";
 import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
+import { MdSearch, MdClose } from "react-icons/md";
 
 export interface Project {
     id: string;
@@ -21,6 +22,9 @@ interface ProjectsManagerProps {
     initialProjects: Project[];
 }
 
+// Get all Si icon names from the library
+const allSiIconNames = Object.keys(SiIcons).filter(key => key.startsWith('Si'));
+
 export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
     const [projects, setProjects] = useState<Project[]>(initialProjects);
     const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +40,9 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         github: "",
         featured: false,
     });
+    const [showIconSearch, setShowIconSearch] = useState(false);
+    const [iconSearch, setIconSearch] = useState("");
+    const [customTechForm, setCustomTechForm] = useState({ name: "", iconName: "", color: "#888888" });
 
     const fetchProjects = async () => {
         setIsLoading(true);
@@ -56,6 +63,15 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         return icons[iconName] || null;
     };
 
+    // Filter icons based on search query
+    const filteredIcons = useMemo(() => {
+        if (!iconSearch.trim()) return [];
+        const query = iconSearch.toLowerCase();
+        return allSiIconNames
+            .filter(name => name.toLowerCase().includes(query))
+            .slice(0, 50); // Limit to 50 results for performance
+    }, [iconSearch]);
+
     const openCreateModal = () => {
         setEditingProject(null);
         setSelectedTags([]);
@@ -68,6 +84,9 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             github: "",
             featured: false,
         });
+        setShowIconSearch(false);
+        setIconSearch("");
+        setCustomTechForm({ name: "", iconName: "", color: "#888888" });
         setIsModalOpen(true);
     };
 
@@ -83,6 +102,9 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             github: project.github || "",
             featured: project.featured,
         });
+        setShowIconSearch(false);
+        setIconSearch("");
+        setCustomTechForm({ name: "", iconName: "", color: "#888888" });
         setIsModalOpen(true);
     };
 
@@ -92,6 +114,24 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 ? prev.filter((t) => t !== tagName)
                 : [...prev, tagName]
         );
+    };
+
+    const addSearchedIcon = (iconName: string) => {
+        // Extract readable name from icon name (e.g., SiReact -> React)
+        const readableName = iconName.replace(/^Si/, '').replace(/([A-Z])/g, ' $1').trim();
+        setCustomTechForm({
+            name: readableName,
+            iconName: iconName,
+            color: "#888888"
+        });
+        setIconSearch("");
+    };
+
+    const addCustomTech = () => {
+        if (customTechForm.name.trim() && !selectedTags.includes(customTechForm.name.trim())) {
+            setSelectedTags([...selectedTags, customTechForm.name.trim()]);
+            setCustomTechForm({ name: "", iconName: "", color: "#888888" });
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -143,6 +183,18 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         );
     };
 
+    // Get icon for a tag name (either from predefined or searched)
+    const getTagIcon = (tagName: string) => {
+        const tech = getTechStackOption(tagName);
+        if (tech) {
+            return { IconComp: getIcon(tech.icon), color: tech.color };
+        }
+        // Try to find a matching Si icon
+        const iconName = `Si${tagName.replace(/\s+/g, '')}`;
+        const IconComp = getIcon(iconName);
+        return { IconComp, color: "#888888" };
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -153,7 +205,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                 </div>
                 <button
                     onClick={openCreateModal}
-                    className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all"
+                    className="px-4 py-2 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all"
                 >
                     + Add Project
                 </button>
@@ -187,8 +239,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                                     <td className="px-6 py-4">
                                         <div className="flex flex-wrap gap-2">
                                             {project.tags.slice(0, 5).map((tag) => {
-                                                const techOpt = getTechStackOption(tag.name);
-                                                const IconComp = techOpt ? getIcon(techOpt.icon) : null;
+                                                const { IconComp, color } = getTagIcon(tag.name);
                                                 return (
                                                     <div
                                                         key={tag.id}
@@ -198,7 +249,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                                                         {IconComp && (
                                                             <IconComp
                                                                 className="w-4 h-4"
-                                                                style={{ color: techOpt?.color }}
+                                                                style={{ color }}
                                                             />
                                                         )}
                                                         <span className="text-xs text-white/70">{tag.name}</span>
@@ -405,52 +456,197 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                                 </div>
                             </div>
 
-                            {/* Tech Stack Multi-Select */}
+                            {/* Tech Stack Multi-Select with Search */}
                             <div>
                                 <label className="block text-sm font-medium text-white/70 mb-2">
                                     Tech Stack ({selectedTags.length} selected)
                                 </label>
-                                <div className="bg-gray-900/50 border border-white/10 rounded-xl p-4 max-h-64 overflow-y-auto">
-                                    <div className="grid grid-cols-4 gap-2">
-                                        {techStackOptions.map((tech) => {
-                                            const IconComp = getIcon(tech.icon);
-                                            const isSelected = selectedTags.includes(tech.name);
-                                            return (
-                                                <button
-                                                    key={tech.slug}
-                                                    type="button"
-                                                    onClick={() => toggleTag(tech.name)}
-                                                    className={`flex items-center gap-2 p-2 rounded-lg transition-all ${isSelected
-                                                        ? "bg-emerald-500/20 border border-emerald-500/50"
-                                                        : "bg-gray-800/50 border border-transparent hover:bg-gray-700/50"
-                                                        }`}
-                                                >
-                                                    {IconComp && (
-                                                        <IconComp
-                                                            className="w-5 h-5 flex-shrink-0"
-                                                            style={{ color: tech.color }}
-                                                        />
-                                                    )}
-                                                    <span className={`text-xs truncate ${isSelected ? "text-emerald-300" : "text-white/70"}`}>
-                                                        {tech.name}
-                                                    </span>
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
+
+                                {/* Tab Toggle */}
+                                <div className="flex gap-2 mb-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowIconSearch(false)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${!showIconSearch ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' : 'bg-gray-900/50 text-white/50 border border-transparent hover:bg-gray-800'}`}
+                                    >
+                                        Quick Select
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowIconSearch(true)}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${showIconSearch ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' : 'bg-gray-900/50 text-white/50 border border-transparent hover:bg-gray-800'}`}
+                                    >
+                                        <MdSearch /> Search All Icons
+                                    </button>
                                 </div>
+
+                                {/* Quick Select */}
+                                {!showIconSearch && (
+                                    <div className="bg-gray-900/50 border border-white/10 rounded-xl p-4 max-h-64 overflow-y-auto">
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {techStackOptions.map((tech) => {
+                                                const IconComp = getIcon(tech.icon);
+                                                const isSelected = selectedTags.includes(tech.name);
+                                                return (
+                                                    <button
+                                                        key={tech.slug}
+                                                        type="button"
+                                                        onClick={() => toggleTag(tech.name)}
+                                                        className={`flex items-center gap-2 p-2 rounded-lg transition-all ${isSelected
+                                                            ? "bg-emerald-500/20 border border-emerald-500/50"
+                                                            : "bg-gray-800/50 border border-transparent hover:bg-gray-700/50"
+                                                            }`}
+                                                    >
+                                                        {IconComp && (
+                                                            <IconComp
+                                                                className="w-5 h-5 shrink-0"
+                                                                style={{ color: tech.color }}
+                                                            />
+                                                        )}
+                                                        <span className={`text-xs truncate ${isSelected ? "text-emerald-300" : "text-white/70"}`}>
+                                                            {tech.name}
+                                                        </span>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Icon Search */}
+                                {showIconSearch && (
+                                    <div>
+                                        <div className="relative mb-3">
+                                            <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-lg" />
+                                            <input
+                                                type="text"
+                                                value={iconSearch}
+                                                onChange={(e) => setIconSearch(e.target.value)}
+                                                className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
+                                                placeholder="Type to search... (e.g., 'flutter', 'aws', 'docker')"
+                                            />
+                                            {iconSearch && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIconSearch("")}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                                                >
+                                                    <MdClose />
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="bg-gray-900/50 border border-white/10 rounded-xl p-3 min-h-[120px] max-h-48 overflow-y-auto">
+                                            {iconSearch.length === 0 ? (
+                                                <p className="text-white/30 text-sm text-center py-8">Ketik nama icon untuk mencari...</p>
+                                            ) : filteredIcons.length === 0 ? (
+                                                <p className="text-white/30 text-sm text-center py-8">Tidak ditemukan icon &quot;{iconSearch}&quot;</p>
+                                            ) : (
+                                                <div className="grid grid-cols-5 gap-2">
+                                                    {filteredIcons.map((iconName) => {
+                                                        const IconComp = getIcon(iconName);
+                                                        const isSelected = customTechForm.iconName === iconName;
+                                                        return (
+                                                            <button
+                                                                key={iconName}
+                                                                type="button"
+                                                                onClick={() => addSearchedIcon(iconName)}
+                                                                className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-all ${isSelected ? "bg-emerald-500/20 border border-emerald-500/50" : "bg-gray-800/50 border border-transparent hover:bg-gray-700/50"}`}
+                                                            >
+                                                                {IconComp && <IconComp className="w-6 h-6" style={{ color: customTechForm.iconName === iconName ? customTechForm.color : "#888888" }} />}
+                                                                <span className={`text-[10px] truncate w-full text-center ${isSelected ? "text-emerald-300" : "text-white/50"}`}>{iconName.replace('Si', '')}</span>
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                            {filteredIcons.length === 50 && (
+                                                <p className="text-white/30 text-xs text-center mt-2">Showing first 50 results. Type more to narrow down.</p>
+                                            )}
+                                        </div>
+
+                                        {/* Custom Tech Form */}
+                                        <div className="mt-4 grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-white/70 mb-2">Name</label>
+                                                <input
+                                                    type="text"
+                                                    value={customTechForm.name}
+                                                    onChange={(e) => setCustomTechForm({ ...customTechForm, name: e.target.value })}
+                                                    className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
+                                                    placeholder="React"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-white/70 mb-2">Icon Name</label>
+                                                <input
+                                                    type="text"
+                                                    value={customTechForm.iconName}
+                                                    onChange={(e) => setCustomTechForm({ ...customTechForm, iconName: e.target.value })}
+                                                    className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
+                                                    placeholder="SiReact"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="mt-4">
+                                            <label className="block text-sm font-medium text-white/70 mb-2">Color</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="color"
+                                                    value={customTechForm.color}
+                                                    onChange={(e) => setCustomTechForm({ ...customTechForm, color: e.target.value })}
+                                                    className="w-12 h-10 rounded-lg cursor-pointer bg-transparent border-0"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={customTechForm.color}
+                                                    onChange={(e) => setCustomTechForm({ ...customTechForm, color: e.target.value })}
+                                                    className="flex-1 px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white font-mono focus:outline-none focus:border-emerald-500/50"
+                                                    placeholder="#61DAFB"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Preview */}
+                                        {customTechForm.iconName && (
+                                            <div className="mt-4 bg-gray-900/50 border border-white/10 rounded-xl p-4 flex items-center justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <span className="text-white/50 text-sm">Preview:</span>
+                                                    {(() => {
+                                                        const IconComp = getIcon(customTechForm.iconName);
+                                                        return IconComp ? (
+                                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 rounded-lg">
+                                                                <IconComp className="w-5 h-5" style={{ color: customTechForm.color }} />
+                                                                <span className="text-white">{customTechForm.name || "Unnamed"}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <span className="text-red-400 text-sm">Icon not found</span>
+                                                        );
+                                                    })()}
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={addCustomTech}
+                                                    disabled={!customTechForm.name.trim()}
+                                                    className="px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-lg hover:bg-emerald-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    + Add
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 {/* Selected Tags Preview */}
                                 {selectedTags.length > 0 && (
                                     <div className="mt-3 flex flex-wrap gap-2">
                                         {selectedTags.map((tagName) => {
-                                            const tech = techStackOptions.find((t) => t.name === tagName);
-                                            const IconComp = tech ? getIcon(tech.icon) : null;
+                                            const { IconComp, color } = getTagIcon(tagName);
                                             return (
                                                 <span
                                                     key={tagName}
                                                     className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm"
                                                 >
-                                                    {IconComp && <IconComp className="w-4 h-4" style={{ color: tech?.color }} />}
+                                                    {IconComp && <IconComp className="w-4 h-4" style={{ color }} />}
                                                     {tagName}
                                                     <button
                                                         type="button"
@@ -488,7 +684,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all"
+                                    className="px-6 py-2 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all"
                                 >
                                     {editingProject ? "Update" : "Create"}
                                 </button>
@@ -500,3 +696,4 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         </div>
     );
 }
+

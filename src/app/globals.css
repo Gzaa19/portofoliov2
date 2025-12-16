@@ -3,6 +3,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@view-transition {
+  navigation: auto;
+}
+
+@theme {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+}
+
 :root {
   /* Background Colors - Light Theme */
   --background-secondary: #fafafa;
@@ -41,13 +50,13 @@
   /* Status Colors */
   --status-available: #34a853;
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --background: #ffffff;
+  --foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  --primary-foreground: #ffffff;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -71,136 +80,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-}
-
-@theme {
-  --font-sans: var(--font-sans);
-  --font-serif: var(--font-serif);
-}
-
-/* Custom Utilities - Navbar Dark Theme */
-.nav-item {
-  @apply px-4 py-1.5 rounded-full text-gray-600 text-sm font-semibold hover:bg-gray-100 hover:text-gray-900 transition;
-}
-
-.nav-item--active {
-  @apply bg-gray-900 text-white hover:bg-gray-800 hover:text-white;
-}
-
-/* Hero Ring - Antigravity Blue Style */
-.hero-ring {
-  @apply absolute border-2 rounded-full;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-color: var(--ring-color);
-  box-shadow: 0 0 80px inset var(--ring-shadow);
-}
-
-/* Hero Ring Pulse Animation - separate class */
-.hero-ring.animate-ring-pulse {
-  animation: heroRingPulse 10s ease-in-out infinite;
-}
-
-@keyframes heroRingPulse {
-
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: translate(-50%, -50%) scale(1.08);
-    opacity: 0.7;
-  }
-}
-
-/* Gemini Star/Icon Gradient */
-.gemini-icon {
-  background: var(--gradient-gemini);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Heading Gradient */
-.heading-gradient {
-  background: linear-gradient(135deg, #7B8CDE 0%, #9B72CB 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Section Title Style - Rainbow Gradient dengan dominan biru */
-.section-title {
-  @apply uppercase text-lg md:text-xl lg:text-2xl font-semibold tracking-[0.2em];
-  background: linear-gradient(135deg, #4285F4 0%, #4285F4 60%, #34A853 75%, #FBBC05 88%, #EA4335 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Project Title - Animasi gradient saat hover */
-.project-title {
-  @apply text-xl md:text-2xl font-serif font-bold text-gray-900 mb-2 transition-all duration-500;
-  background: linear-gradient(135deg, #1a1a1a 0%, #1a1a1a 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.group:hover .project-title {
-  background: linear-gradient(135deg, #4285F4 0%, #4285F4 60%, #34A853 75%, #FBBC05 88%, #EA4335 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Card hover effect */
-.card-glow:hover {
-  border-color: var(--card-hover-border);
-  box-shadow: 0 0 30px rgba(66, 133, 244, 0.1);
-}
-
-/* Primary Button - Dark */
-.btn-primary {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300;
-  background: var(--foreground);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #333;
-}
-
-/* Secondary Button - Light Theme */
-.btn-secondary {
-  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300;
-  background: transparent;
-  color: var(--text-primary);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-}
-
-.btn-secondary:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-/* Body - Light Theme */
-body {
-  font-family: var(--font-sans);
-  background-color: #ffffff;
-  color: var(--text-primary);
-}
-
-/* Hide scrollbar utility */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
 }
 
 @theme inline {
@@ -293,9 +172,8 @@ body {
   }
 }
 
-/* === CSS Animations (React Bits Style) === */
+/* === KEYFRAMES === */
 
-/* Fade In Up Animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -308,7 +186,6 @@ body {
   }
 }
 
-/* Fade In Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -319,7 +196,6 @@ body {
   }
 }
 
-/* Scale Animation */
 @keyframes scaleIn {
   from {
     opacity: 0;
@@ -332,7 +208,6 @@ body {
   }
 }
 
-/* Pulse Glow Animation for LED */
 @keyframes pulseGlow {
 
   0%,
@@ -347,7 +222,6 @@ body {
   }
 }
 
-/* Ripple Animation for LED outer glow */
 @keyframes ripple {
   0% {
     transform: scale(1);
@@ -365,8 +239,6 @@ body {
   }
 }
 
-
-/* Slide indicator animation */
 @keyframes slideIn {
   from {
     transform: scaleX(0);
@@ -377,7 +249,6 @@ body {
   }
 }
 
-/* Float animation */
 @keyframes float {
 
   0%,
@@ -390,7 +261,6 @@ body {
   }
 }
 
-/* Rotate animation */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -401,101 +271,6 @@ body {
   }
 }
 
-/* Animation Utility Classes */
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.4s ease-out forwards;
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 1.5s ease-in-out infinite;
-}
-
-.animate-ripple {
-  animation: ripple 2s ease-in-out infinite;
-}
-
-
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Staggered animation delays */
-.delay-100 {
-  animation-delay: 0.1s;
-}
-
-.delay-200 {
-  animation-delay: 0.2s;
-}
-
-.delay-300 {
-  animation-delay: 0.3s;
-}
-
-.delay-400 {
-  animation-delay: 0.4s;
-}
-
-.delay-500 {
-  animation-delay: 0.5s;
-}
-
-.delay-1000 {
-  animation-delay: 1s;
-}
-
-.delay-1500 {
-  animation-delay: 1.5s;
-}
-
-/* Initially hidden for animations */
-.animate-on-scroll {
-  opacity: 0;
-}
-
-.animate-on-scroll.visible {
-  animation: fadeInUp 0.6s ease-out forwards;
-}
-
-/* Hover transitions */
-.hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-/* Card 3D tilt effect */
-.card-tilt {
-  transition: transform 0.3s ease;
-  transform-style: preserve-3d;
-}
-
-.card-tilt:hover {
-  transform: perspective(1000px) rotateX(5deg) rotateY(-5deg);
-}
-
-/* Smooth image zoom */
-.img-zoom {
-  transition: transform 0.5s ease;
-}
-
-.img-zoom:hover {
-  transform: scale(1.05);
-}
-
-/* Text gradient animation */
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
@@ -510,7 +285,305 @@ body {
   }
 }
 
-.text-gradient-animate {
-  background-size: 200% 200%;
-  animation: gradientShift 3s ease infinite;
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%) scale(0.9);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes navPill {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes heroRingPulse {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 0.7;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* === COMPONENTS LAYER === */
+@layer components {
+
+  /* Custom Utilities - Navbar Dark Theme */
+  .nav-item {
+    @apply px-4 py-1.5 rounded-full text-gray-600 text-sm font-semibold hover:bg-gray-100 hover:text-gray-900 transition;
+  }
+
+  .nav-item--active {
+    @apply bg-gray-900 text-white hover:bg-gray-800 hover:text-white;
+  }
+
+  /* Hero Ring - Antigravity Blue Style */
+  .hero-ring {
+    @apply absolute border-2 rounded-full;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-color: var(--ring-color);
+    box-shadow: 0 0 80px inset var(--ring-shadow);
+  }
+
+  .hero-ring.animate-ring-pulse {
+    animation: heroRingPulse 10s ease-in-out infinite;
+  }
+
+  /* Gemini Star/Icon Gradient */
+  .gemini-icon {
+    background: var(--gradient-gemini);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Heading Gradient */
+  .heading-gradient {
+    background: linear-gradient(135deg, #7B8CDE 0%, #9B72CB 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Section Title Style - Rainbow Gradient dengan dominan biru */
+  .section-title {
+    @apply uppercase text-lg md:text-xl lg:text-2xl font-semibold tracking-[0.2em];
+    background: linear-gradient(135deg, #4285F4 0%, #4285F4 60%, #34A853 75%, #FBBC05 88%, #EA4335 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Project Title - Animasi gradient saat hover */
+  .project-title {
+    @apply text-xl md:text-2xl font-serif font-bold text-gray-900 mb-2 transition-all duration-500;
+    background: linear-gradient(135deg, #1a1a1a 0%, #1a1a1a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @container (max-width: 320px) {
+    .project-title {
+      @apply text-lg;
+    }
+  }
+
+  .group:hover .project-title {
+    background: linear-gradient(135deg, #4285F4 0%, #4285F4 60%, #34A853 75%, #FBBC05 88%, #EA4335 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Card hover effect */
+  .card-glow:hover {
+    border-color: var(--card-hover-border);
+    box-shadow: 0 0 30px rgba(66, 133, 244, 0.1);
+  }
+
+  /* Primary Button - Dark */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+    background: var(--foreground);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #333;
+  }
+
+  /* Secondary Button - Light Theme */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300;
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hover transitions */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Card 3D tilt effect */
+  .card-tilt {
+    transition: transform 0.3s ease;
+    transform-style: preserve-3d;
+  }
+
+  .card-tilt:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(-5deg);
+  }
+
+  /* Smooth image zoom */
+  .img-zoom {
+    transition: transform 0.5s ease;
+  }
+
+  .img-zoom:hover {
+    transform: scale(1.05);
+  }
+
+  .text-gradient-animate {
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+  }
+}
+
+/* === UTILITIES LAYER === */
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 1.5s ease-in-out infinite;
+  }
+
+  .animate-ripple {
+    animation: ripple 2s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
+
+  .animate-nav-pill {
+    animation: navPill 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out forwards;
+  }
+
+  .antigravity-container {
+    @apply absolute inset-0 z-0 overflow-hidden pointer-events-auto;
+    opacity: 0;
+    animation: fadeIn 2s ease-out forwards;
+  }
+
+  /* Container Queries Utility */
+  .cq-container {
+    container-type: inline-size;
+  }
+
+  /* Staggered animation delays */
+
+  .delay-100 {
+    animation-delay: 0.1s;
+  }
+
+  .delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  .delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  .delay-1000 {
+    animation-delay: 1s;
+  }
+
+  .delay-1500 {
+    animation-delay: 1.5s;
+  }
+
+  /* Initially hidden for animations */
+  .animate-on-scroll {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .animate-on-scroll.visible {
+    opacity: 1;
+  }
 }

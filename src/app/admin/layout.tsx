@@ -11,7 +11,8 @@ import {
     MdLogout,
     MdChevronLeft,
     MdChevronRight,
-    MdBuildCircle
+    MdBuildCircle,
+    MdPerson
 } from "react-icons/md";
 import { IconType } from "react-icons";
 
@@ -27,6 +28,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
     { name: "Dashboard", href: "/admin/dashboard", icon: MdDashboard },
+    { name: "About", href: "/admin/about", icon: MdPerson },
     { name: "Projects", href: "/admin/projects", icon: MdFolder },
     { name: "Toolbox", href: "/admin/toolbox", icon: MdBuildCircle },
     { name: "Social Links", href: "/admin/social-links", icon: MdLink },

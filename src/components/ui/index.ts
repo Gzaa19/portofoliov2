@@ -12,6 +12,6 @@ export { Skeleton } from './skeleton';
 // Custom reusable components
 export { Section, SectionHeader } from './section';
 export { Animated } from './animated';
-export { Navbar } from './navbar';
+
 export { StatusBadge } from './status-badge';
 export { StackedCards, SocialCard } from './stacked-cards';
