@@ -112,3 +112,40 @@ model Location {
 
   @@map("locations")
 }
+
+// ==========================================
+// ToolboxCategory Model - Kategori untuk toolbox (e.g., "Programming Languages")
+// ==========================================
+model ToolboxCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g., "Programming Languages"
+  order     Int      @default(0) // Urutan tampil
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi ke items
+  items ToolboxItem[]
+
+  @@map("toolbox_categories")
+}
+
+// ==========================================
+// ToolboxItem Model - Item dalam toolbox (e.g., "React", "Next.js")
+// ==========================================
+model ToolboxItem {
+  id        String   @id @default(cuid())
+  name      String // e.g., "React"
+  iconName  String // Icon name dari react-icons/si (e.g., "SiReact")
+  color     String // Hex color (e.g., "#61DAFB")
+  order     Int      @default(0) // Urutan tampil dalam kategori
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi ke category
+  categoryId String
+  category   ToolboxCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("toolbox_items")
+}

@@ -10,7 +10,8 @@ import {
     MdLocationOn,
     MdLogout,
     MdChevronLeft,
-    MdChevronRight
+    MdChevronRight,
+    MdBuildCircle
 } from "react-icons/md";
 import { IconType } from "react-icons";
 
@@ -27,6 +28,7 @@ interface NavItem {
 const navItems: NavItem[] = [
     { name: "Dashboard", href: "/admin/dashboard", icon: MdDashboard },
     { name: "Projects", href: "/admin/projects", icon: MdFolder },
+    { name: "Toolbox", href: "/admin/toolbox", icon: MdBuildCircle },
     { name: "Social Links", href: "/admin/social-links", icon: MdLink },
     { name: "Location", href: "/admin/location", icon: MdLocationOn },
 ];

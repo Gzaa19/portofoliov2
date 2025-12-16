@@ -1,9 +1,9 @@
-import { motion } from "framer-motion";
 import ProjectCard from "@/components/ProjectCard";
 import prisma from "@/lib/prisma";
+import AntigravityWrapper from "@/components/AntigravityWrapper";
 
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 // Fetch projects from database
 async function getProjects() {
@@ -27,15 +27,29 @@ export default async function ProjectsPage() {
     const projects = await getProjects();
 
     return (
-        <div className="min-h-screen py-32 px-4">
-            <div className="container mx-auto max-w-6xl">
+        <div className="min-h-screen py-32 px-4 relative">
+            {/* Antigravity Particles */}
+            <AntigravityWrapper
+                count={3000}
+                magnetRadius={18}
+                ringRadius={12}
+                waveSpeed={0.3}
+                waveAmplitude={1.2}
+                particleSize={0.8}
+                lerpSpeed={0.08}
+                color={'#4285F4'}
+                autoAnimate={true}
+                particleVariance={2}
+            />
+
+            <div className="container mx-auto max-w-6xl relative z-10">
                 {/* Header Section */}
                 <div className="text-center mb-16">
-                    <h1 className="uppercase text-lg md:text-xl lg:text-2xl font-semibold tracking-[0.2em] bg-gradient-to-r from-emerald-500 to-teal-300 bg-clip-text text-transparent mb-6">
+                    <h1 className="section-title mb-6">
                         My Projects
                     </h1>
 
-                    <p className="mt-4 text-center text-white/60 md:text-lg font-sans max-w-2xl mx-auto leading-relaxed">
+                    <p className="mt-4 text-center text-gray-500 md:text-lg font-sans max-w-2xl mx-auto leading-relaxed">
                         A collection of projects I've worked on, showcasing my skills in web development, design, and problem-solving.
                     </p>
                 </div>
@@ -57,7 +71,7 @@ export default async function ProjectsPage() {
                 </div>
 
                 {projects.length === 0 && (
-                    <div className="text-center text-white/50 py-16">
+                    <div className="text-center text-gray-400 py-16">
                         <p>Belum ada project yang ditambahkan.</p>
                     </div>
                 )}

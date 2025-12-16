@@ -1,40 +1,36 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
-import grainImage from "@/assets/images/grain.jpg";
 
 interface SectionCardProps {
     children: ReactNode;
     className?: string;
+    animate?: boolean;
 }
 
-export const SectionCard = ({
+/**
+ * Section Card - A styled card container for content sections
+ * Uses consistent styling with the design system
+ */
+export function SectionCard({
     children,
     className = "",
-}: SectionCardProps) => {
+    animate = true,
+}: SectionCardProps) {
     return (
-        <motion.div
-            className={`relative rounded-3xl bg-gray-800/80 border border-white/10 overflow-hidden ${className}`}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
+        <div
+            className={cn(
+                "relative rounded-3xl bg-gray-50 border border-gray-200 overflow-hidden shadow-sm",
+                animate && "animate-fade-in-up",
+                className
+            )}
         >
-            {/* Grain Background */}
-            <div
-                className="absolute inset-0 opacity-5 pointer-events-none"
-                style={{
-                    backgroundImage: `url(${grainImage.src})`,
-                }}
-            />
-
-            {/* Content */}
             <div className="relative z-10">
                 {children}
             </div>
-        </motion.div>
+        </div>
     );
-};
+}
 
 export default SectionCard;

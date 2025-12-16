@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import Link from "next/link";
 import {
     GitHubIcon,
@@ -11,9 +10,9 @@ import {
 } from "@/components/SocialIcons";
 import { SectionCard } from "@/components/SectionCard";
 import prisma from "@/lib/prisma";
+import AntigravityWrapper from "@/components/AntigravityWrapper";
 
-
-export const revalidate = 60;
+export const revalidate = 0;
 
 // Map iconName to actual component
 const iconMap: Record<string, React.ComponentType> = {
@@ -40,14 +39,28 @@ export default async function Contact() {
     const socialLinks = await getSocialLinks();
 
     return (
-        <div className="min-h-screen py-32 px-4">
-            <div className="container mx-auto max-w-5xl">
+        <div className="min-h-screen py-32 px-4 relative">
+            {/* Antigravity Particles */}
+            <AntigravityWrapper
+                count={3000}
+                magnetRadius={18}
+                ringRadius={12}
+                waveSpeed={0.3}
+                waveAmplitude={1.2}
+                particleSize={0.8}
+                lerpSpeed={0.08}
+                color={'#4285F4'}
+                autoAnimate={true}
+                particleVariance={2}
+            />
+
+            <div className="container mx-auto max-w-5xl relative z-10">
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <h1 className="uppercase text-lg md:text-xl lg:text-2xl font-semibold tracking-[0.2em] bg-gradient-to-r from-emerald-500 to-teal-300 bg-clip-text text-transparent">
+                    <h1 className="section-title">
                         Let's Connect
                     </h1>
-                    <p className="mt-4 text-white/60 md:text-lg font-sans max-w-md mx-auto">
+                    <p className="mt-4 text-gray-500 md:text-lg font-sans max-w-md mx-auto">
                         Feel free to reach out through any of these platforms. I'm always open to new opportunities and collaborations!
                     </p>
                 </div>
@@ -60,7 +73,7 @@ export default async function Contact() {
                         return (
                             <SectionCard
                                 key={social.id}
-                                className="hover:border-white/20 transition-all duration-300 cursor-pointer"
+                                className="hover:border-gray-300 transition-all duration-300 cursor-pointer"
                             >
                                 <Link
                                     href={social.url}
@@ -76,20 +89,20 @@ export default async function Contact() {
 
                                         {/* Content */}
                                         <div className="flex-1">
-                                            <h3 className="font-semibold text-lg text-white">
+                                            <h3 className="font-semibold text-lg text-gray-900">
                                                 {social.name}
                                             </h3>
-                                            <p className="text-emerald-400 text-sm font-medium">
+                                            <p className="text-blue-500 text-sm font-medium">
                                                 {social.username}
                                             </p>
                                             {social.description && (
-                                                <p className="text-white/50 text-sm mt-1">
+                                                <p className="text-gray-500 text-sm mt-1">
                                                     {social.description}
                                                 </p>
                                             )}
 
                                             {/* Visit Button */}
-                                            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-sm font-medium text-white/80 hover:text-white hover:border-white/40 transition-colors">
+                                            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-sm font-medium text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-colors">
                                                 Visit Profile
                                                 <ArrowIcon />
                                             </div>
@@ -102,7 +115,7 @@ export default async function Contact() {
                 </div>
 
                 {socialLinks.length === 0 && (
-                    <div className="text-center text-white/50 py-16">
+                    <div className="text-center text-gray-400 py-16">
                         <p>Belum ada social links yang ditambahkan.</p>
                     </div>
                 )}
