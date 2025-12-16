@@ -3,6 +3,7 @@ import { Inter, Calistoga } from "next/font/google";
 import { twMerge } from "tailwind-merge";
 import "./globals.css";
 import { ConditionalHeader } from "@/components/ConditionalHeader";
+import { ChatBotWrapper } from "@/components/ChatBotWrapper";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -35,8 +36,8 @@ export default function RootLayout({
       >
         <ConditionalHeader />
         {children}
+        <ChatBotWrapper />
       </body>
     </html>
   );
 }
-

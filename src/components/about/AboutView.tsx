@@ -8,6 +8,7 @@ import { ToolboxSection, ToolboxCategory } from "@/components/ToolboxSection";
 import { MapCard } from "@/components/MapCard";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
 import { Animated } from "@/components/ui/animated";
+import GradientText from "@/components/GradientText";
 import aboutFoto from "@/assets/images/About Foto.png";
 
 const Antigravity = dynamic(() => import("@/components/Antigravity"), {
@@ -74,9 +75,13 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
                 <div className="container mx-auto px-4 relative z-10">
                     {/* Section Title */}
                     <Animated animation="fade-in-up" className="text-center mb-12">
-                        <h2 className="section-title">
+                        <GradientText
+                            colors={['#4285f4', '#9b72cb', '#d96570', '#9b72cb', '#4285f4']}
+                            animationSpeed={6}
+                            className="section-title"
+                        >
                             About Me
-                        </h2>
+                        </GradientText>
                     </Animated>
 
                     {/* Content Container */}

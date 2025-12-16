@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowIcon } from "@/components/SocialIcons";
 import { SectionCard } from "@/components/SectionCard";
 import AntigravityWrapper from "@/components/AntigravityWrapper";
+import GradientText from "@/components/GradientText";
 import {
     GitHubIcon,
     LinkedInIcon,
@@ -59,9 +60,13 @@ export const ContactView = ({ socialLinks }: ContactViewProps) => {
             <div className="container mx-auto max-w-5xl relative z-10 pointer-events-none">
                 {/* Header */}
                 <div className="text-center mb-16 pointer-events-auto">
-                    <h1 className="section-title">
+                    <GradientText
+                        colors={['#4285f4', '#9b72cb', '#d96570', '#9b72cb', '#4285f4']}
+                        animationSpeed={6}
+                        className="section-title"
+                    >
                         Let's Connect
-                    </h1>
+                    </GradientText>
                     <p className="mt-4 text-gray-500 md:text-lg font-sans max-w-md mx-auto">
                         Feel free to reach out through any of these platforms. I'm always open to new opportunities and collaborations!
                     </p>

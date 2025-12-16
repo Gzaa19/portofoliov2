@@ -1,6 +1,7 @@
 import ProjectCard from "@/components/ProjectCard";
 import prisma from "@/lib/prisma";
 import AntigravityWrapper from "@/components/AntigravityWrapper";
+import GradientText from "@/components/GradientText";
 
 export const revalidate = 3600;
 // Fetch projects from database
@@ -43,9 +44,13 @@ export default async function ProjectsPage() {
             <div className="container mx-auto max-w-6xl relative z-10 pointer-events-none">
                 {/* Header Section */}
                 <div className="text-center mb-16 pointer-events-auto">
-                    <h1 className="section-title mb-6">
+                    <GradientText
+                        colors={['#4285f4', '#9b72cb', '#d96570', '#9b72cb', '#4285f4']}
+                        animationSpeed={6}
+                        className="section-title mb-6"
+                    >
                         My Projects
-                    </h1>
+                    </GradientText>
 
                     <p className="mt-4 text-center text-gray-500 md:text-lg font-sans max-w-2xl mx-auto leading-relaxed">
                         A collection of projects I've worked on, showcasing my skills in web development, design, and problem-solving.
