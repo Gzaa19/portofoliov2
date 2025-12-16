@@ -13,16 +13,19 @@ const variantStyles = {
         dot: "bg-green-500",
         glow: "bg-green-500/20",
         ring: "bg-green-400/30",
+        animation: "animate-pulse-glow",
     },
     busy: {
         dot: "bg-red-500",
         glow: "bg-red-500/20",
         ring: "bg-red-400/30",
+        animation: "animate-blink",
     },
     away: {
         dot: "bg-yellow-500",
         glow: "bg-yellow-500/20",
         ring: "bg-yellow-400/30",
+        animation: "animate-pulse-glow",
     },
 };
 
@@ -47,7 +50,7 @@ export function StatusBadge({
                 {/* Middle pulse ring */}
                 <div className={cn("absolute size-4 rounded-full animate-ripple delay-300", styles.ring)} />
                 {/* Core LED dot */}
-                <div className={cn("relative size-2.5 rounded-full animate-pulse-glow", styles.dot)} />
+                <div className={cn("relative size-2.5 rounded-full", styles.dot, styles.animation)} />
             </div>
             <span className="text-sm font-medium text-white">{text}</span>
         </div>

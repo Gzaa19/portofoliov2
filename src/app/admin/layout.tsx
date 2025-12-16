@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
-    MdDashboard,
     MdFolder,
     MdLink,
     MdLocationOn,
@@ -27,7 +26,6 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-    { name: "Dashboard", href: "/admin/dashboard", icon: MdDashboard },
     { name: "About", href: "/admin/about", icon: MdPerson },
     { name: "Projects", href: "/admin/projects", icon: MdFolder },
     { name: "Toolbox", href: "/admin/toolbox", icon: MdBuildCircle },

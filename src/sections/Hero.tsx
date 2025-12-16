@@ -31,7 +31,7 @@ export function Hero() {
 
                     {/* Status Badge */}
                     <Animated animation="fade-in-up" delay={100}>
-                        <StatusBadge variant="available" />
+                        <StatusBadge variant="busy" text="Not Available" />
                     </Animated>
 
                     {/* Heading */}

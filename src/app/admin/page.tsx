@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
             });
 
             if (res.ok) {
-                router.push("/admin/dashboard");
+                router.push("/admin/about");
             } else {
                 setError("Username atau password salah");
             }
