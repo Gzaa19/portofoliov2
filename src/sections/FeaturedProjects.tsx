@@ -2,20 +2,11 @@
 
 import Folder from "@/components/Folder";
 import { FolderProjectCard } from "@/components/FolderProjectCard";
-import GradientText from "@/components/GradientText";
-
-interface Project {
-    id: string;
-    slug: string;
-    title: string;
-    description: string;
-    image: string | null;
-    link: string | null;
-    github: string | null;
-}
+import { GradientText } from "@/components/ui";
+import type { FeaturedProject } from "@/data";
 
 interface FeaturedProjectsProps {
-    projects: Project[];
+    projects: FeaturedProject[];
 }
 
 /**

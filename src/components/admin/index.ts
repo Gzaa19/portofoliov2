@@ -1,5 +1,19 @@
-export { ProjectsManager, type Project } from './ProjectsManager';
-export { LocationManager, type Location } from './LocationManager';
-export { SocialLinksManager, type SocialLink } from './SocialLinksManager';
-export { DashboardManager, type DashboardStats } from './DashboardManager';
-export { ToolboxManager, type ToolboxCategory, type ToolboxItem } from './ToolboxManager';
+// ==========================================
+// Admin Components Index
+// ==========================================
+
+export { ProjectsManager } from './ProjectsManager';
+export { LocationManager } from './LocationManager';
+export { SocialLinksManager } from './SocialLinksManager';
+export { DashboardManager } from './DashboardManager';
+export { ToolboxManager } from './ToolboxManager';
+
+// Re-export types from centralized types file
+export type {
+    Project,
+    Location,
+    SocialLink,
+    DashboardStats,
+    ToolboxCategory,
+    ToolboxItem,
+} from '@/types/types';

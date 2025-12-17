@@ -90,12 +90,16 @@ const AntigravityInner: React.FC<AntigravityProps> = ({
         return temp;
     }, [count, viewport.width, viewport.height]);
 
-    useFrame(state => {
+    useFrame((state, delta) => {
         const mesh = meshRef.current;
         if (!mesh) return;
 
         const { viewport: v, pointer: m } = state;
         const frameTime = state.clock.getElapsedTime();
+
+        // Delta-time based smoothing for 120fps/144hz
+        // Target 60fps as baseline, scale for higher refresh rates
+        const deltaScale = Math.min(delta * 60, 2); // Cap at 2x for safety
 
         const mouseDist = Math.sqrt(Math.pow(m.x - lastMousePos.current.x, 2) + Math.pow(m.y - lastMousePos.current.y, 2));
 
@@ -112,12 +116,14 @@ const AntigravityInner: React.FC<AntigravityProps> = ({
             destY = Math.cos(frameTime * 0.4) * (v.height / 3);
         }
 
-        const smoothFactor = 0.12;
+        // Frame-rate independent smoothing
+        const smoothFactor = 1 - Math.pow(0.88, deltaScale);
         targetMouse.current.x += (destX - targetMouse.current.x) * smoothFactor;
         targetMouse.current.y += (destY - targetMouse.current.y) * smoothFactor;
 
-        virtualMouse.current.x += (targetMouse.current.x - virtualMouse.current.x) * 0.15;
-        virtualMouse.current.y += (targetMouse.current.y - virtualMouse.current.y) * 0.15;
+        const virtualSmoothFactor = 1 - Math.pow(0.85, deltaScale);
+        virtualMouse.current.x += (targetMouse.current.x - virtualMouse.current.x) * virtualSmoothFactor;
+        virtualMouse.current.y += (targetMouse.current.y - virtualMouse.current.y) * virtualSmoothFactor;
 
         const targetX = virtualMouse.current.x;
         const targetY = virtualMouse.current.y;
@@ -127,7 +133,8 @@ const AntigravityInner: React.FC<AntigravityProps> = ({
         particles.forEach((particle, i) => {
             let { t, speed, mx, my, mz, cz, randomRadiusOffset, baseScale } = particle;
 
-            t = particle.t += speed / 2;
+            // Frame-rate independent speed
+            t = particle.t += (speed / 2) * deltaScale;
 
             const projectionFactor = 1 - cz / 50;
             const projectedTargetX = targetX * projectionFactor;
@@ -150,9 +157,11 @@ const AntigravityInner: React.FC<AntigravityProps> = ({
                 targetPos.z = mz * depthFactor + Math.sin(t) * (0.5 * waveAmplitude * depthFactor);
             }
 
-            particle.cx += (targetPos.x - particle.cx) * lerpSpeed;
-            particle.cy += (targetPos.y - particle.cy) * lerpSpeed;
-            particle.cz += (targetPos.z - particle.cz) * lerpSpeed;
+            // Frame-rate independent lerp
+            const particleLerp = 1 - Math.pow(1 - lerpSpeed, deltaScale);
+            particle.cx += (targetPos.x - particle.cx) * particleLerp;
+            particle.cy += (targetPos.y - particle.cy) * particleLerp;
+            particle.cz += (targetPos.z - particle.cz) * particleLerp;
 
             dummy.position.set(particle.cx, particle.cy, particle.cz);
 
@@ -197,7 +206,27 @@ const AntigravityInner: React.FC<AntigravityProps> = ({
 
 const Antigravity: React.FC<AntigravityProps> = props => {
     return (
-        <Canvas camera={{ position: [0, 0, 50], fov: 35 }}>
+        <Canvas
+            camera={{ position: [0, 0, 50], fov: 35 }}
+            // Performance optimizations for 120fps/144hz
+            frameloop="always"
+            dpr={[1, 2]} // Device pixel ratio - max 2x for performance
+            performance={{ min: 0.5 }} // Adaptive performance
+            gl={{
+                antialias: true,
+                alpha: true,
+                powerPreference: "high-performance", // Use dedicated GPU
+                stencil: false, // Not needed, improves performance
+                depth: true,
+                // Optimizations for smooth animation
+                precision: "highp",
+                logarithmicDepthBuffer: false,
+            }}
+            // Disable automatic clearing for better performance
+            onCreated={({ gl }) => {
+                gl.setClearColor(0x000000, 0);
+            }}
+        >
             <AntigravityInner {...props} />
         </Canvas>
     );

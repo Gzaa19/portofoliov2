@@ -3,7 +3,7 @@
 import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
 import { cn } from "@/lib/utils";
-import { SectionCard } from "@/components/SectionCard";
+import { GlowCard } from "@/components/ui";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
 import type { ToolboxItem, ToolboxCategory } from "@/types/types";
 
@@ -27,7 +27,7 @@ export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
     return (
         <section id="tech-stack" className="py-16 lg:py-24">
             <div className="container mx-auto px-4">
-                <SectionCard className="p-8 md:p-12">
+                <GlowCard glowColor="purple" glowPosition="top-right" className="p-8 md:p-12">
                     {/* Header */}
                     <div className="flex items-center gap-3 mb-4">
                         <GeminiStarIcon size={40} />
@@ -102,7 +102,7 @@ export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
                             </div>
                         ))}
                     </div>
-                </SectionCard>
+                </GlowCard>
             </div>
         </section>
     );

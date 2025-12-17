@@ -1,23 +1,12 @@
-
-
 import { ContactView } from "@/components/contact/ContactView";
-import prisma from "@/lib/prisma";
-
-async function getSocialLinks() {
-    const socialLinks = await prisma.socialLink.findMany({
-        where: {
-            isActive: true,
-        },
-    });
-    return socialLinks;
-}
+import { getSocialLinks } from "@/data";
 
 export default async function ContactController() {
     const socialLinks = await getSocialLinks();
 
     return (
         <ContactView
-            socialLinks={socialLinks as any}
+            socialLinks={socialLinks}
         />
     );
 }

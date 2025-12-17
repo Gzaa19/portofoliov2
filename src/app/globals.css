@@ -558,6 +558,144 @@
     background-size: 200% 200%;
     animation: gradientShift 3s ease infinite;
   }
+
+  /* === CHATBOT COMPONENT STYLES === */
+
+  /* Chat Window Container */
+  .chat-window {
+    @apply fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[550px] max-h-[calc(100vh-150px)];
+    @apply bg-gray-950 rounded-2xl shadow-2xl border border-gray-800 flex flex-col overflow-hidden;
+  }
+
+  /* Chat Header */
+  .chat-header {
+    @apply bg-gray-900 px-5 py-4 flex items-center gap-3 border-b border-gray-800;
+  }
+
+  /* Chat Message Bubble - User */
+  .chat-bubble-user {
+    @apply max-w-[85%] px-4 py-3 rounded-2xl rounded-br-md text-sm leading-relaxed;
+    @apply bg-white text-gray-900;
+  }
+
+  /* Chat Message Bubble - Assistant */
+  .chat-bubble-assistant {
+    @apply max-w-[85%] px-4 py-3 rounded-2xl rounded-bl-md text-sm leading-relaxed;
+    @apply bg-gray-800 text-gray-100 border border-gray-700;
+  }
+
+  /* Chat Input */
+  .chat-input {
+    @apply flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-sm text-white;
+    @apply placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-1 focus:ring-gray-600 transition-all;
+  }
+
+  /* Chat Send Button */
+  .chat-send-btn {
+    @apply w-10 h-10 rounded-xl bg-white text-gray-900 flex items-center justify-center;
+    @apply disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-all;
+  }
+
+  /* Quick Question Button (Pill Style) */
+  .quick-btn {
+    @apply px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-full text-xs text-gray-300;
+    @apply hover:bg-gray-700 hover:border-gray-500 hover:text-white transition-all;
+    @apply flex items-center gap-1.5 shrink-0;
+  }
+
+  /* === GLASSMORPHISM EFFECTS === */
+
+  /* Glass Card - Dark */
+  .glass-card {
+    @apply rounded-3xl bg-black border border-gray-800 overflow-hidden shadow-lg;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Glass Card - Light */
+  .glass-card-light {
+    @apply rounded-2xl bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  /* Tech Pill (for tags) */
+  .tech-pill {
+    @apply px-3 py-1 text-xs font-medium rounded-full;
+    @apply bg-white/10 backdrop-blur-md text-white/80 border border-white/20;
+  }
+
+  /* Glow Effect Background */
+  .glow-bg {
+    @apply absolute blur-3xl rounded-full pointer-events-none;
+  }
+
+  .glow-blue {
+    @apply bg-blue-500/10;
+  }
+
+  .glow-purple {
+    @apply bg-purple-500/10;
+  }
+
+  .glow-green {
+    @apply bg-green-500/10;
+  }
+
+  /* === ICON CONTAINERS === */
+
+  /* Icon Circle - Dark Theme */
+  .icon-circle {
+    @apply w-10 h-10 rounded-full bg-white/10 flex items-center justify-center;
+  }
+
+  /* Icon Circle - Bordered */
+  .icon-circle-bordered {
+    @apply p-3 rounded-xl bg-gray-800 border border-gray-600;
+    @apply group-hover:bg-gray-700 group-hover:scale-110 transition-all duration-300;
+  }
+
+  /* Tech Stack Icon Container */
+  .tech-icon {
+    @apply p-2 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10;
+    @apply hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105;
+  }
+
+  /* === LAYOUT HELPERS === */
+
+  /* Content Pointer Events */
+  .pointer-auto {
+    @apply pointer-events-auto;
+  }
+
+  /* Page Container */
+  .page-container {
+    @apply container mx-auto max-w-6xl relative z-10;
+  }
+
+  /* Section Spacing */
+  .section-spacing {
+    @apply py-16 lg:py-24;
+  }
+
+  /* Flex Center */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  /* === LINK STYLES === */
+
+  /* Arrow Link */
+  .arrow-link {
+    @apply inline-flex items-center gap-2 text-sm font-medium text-white hover:text-gray-300 transition-colors;
+  }
+
+  .arrow-link svg {
+    @apply transform group-hover:translate-x-1 transition-transform;
+  }
+
+  /* Nav Link */
+  .nav-link {
+    @apply text-gray-400 hover:text-white transition-colors;
+  }
 }
 
 /* === UTILITIES LAYER === */

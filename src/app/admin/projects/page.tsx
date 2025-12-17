@@ -25,6 +25,8 @@ async function getProjects() {
         link: project.link ?? undefined,
         github: project.github ?? undefined,
         featured: project.featured,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
         tags: project.tags.map((pt) => ({
             id: pt.tag.id,
             name: pt.tag.name,

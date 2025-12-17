@@ -1,15 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { SectionCard } from "@/components/SectionCard";
-import { ToolboxSection, ToolboxCategory } from "@/components/ToolboxSection";
+import { GlowCard, Animated, GradientText, Button } from "@/components/ui";
+import { ToolboxSection } from "@/components/ToolboxSection";
 import { MapCard } from "@/components/MapCard";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
-import { Animated } from "@/components/ui/animated";
-import GradientText from "@/components/GradientText";
+import { DownloadIcon } from "@/components/icons";
+import { use3DTilt } from "@/hooks";
 import aboutFoto from "@/assets/images/About Foto.png";
+import type { ToolboxCategory } from "@/types/types";
 
 const Antigravity = dynamic(() => import("@/components/Antigravity"), {
     ssr: false,
@@ -25,28 +25,11 @@ interface AboutViewProps {
 }
 
 export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) => {
-    const cardRef = useRef<HTMLDivElement>(null);
-    const [rotation, setRotation] = useState({ x: 0, y: 0 });
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!cardRef.current) return;
-
-        const rect = cardRef.current.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        const x = (e.clientX - centerX) / rect.width;
-        const y = (e.clientY - centerY) / rect.height;
-
-        setRotation({
-            x: y * -15,
-            y: x * 15,
-        });
-    };
-
-    const handleMouseLeave = () => {
-        setRotation({ x: 0, y: 0 });
-    };
+    // Use custom 3D tilt hook
+    const { ref: cardRef, rotation, handleMouseMove, handleMouseLeave, perspective } = use3DTilt({
+        maxTilt: 15,
+        perspective: 1000,
+    });
 
     // Use DB data or fallback
     const description = initialData?.description || "With expertise in React, Next.js, Node.js, and various modern technologies, I create digital solutions that make a difference. I believe in continuous learning and staying up-to-date with the latest industry trends.";
@@ -66,7 +49,7 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
                         waveAmplitude={1.2}
                         particleSize={0.8}
                         lerpSpeed={0.08}
-                        color={'#4285F4'}
+                        color="#4285F4"
                         autoAnimate={true}
                         particleVariance={2}
                     />
@@ -86,17 +69,15 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
 
                     {/* Content Container */}
                     <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16 max-w-6xl mx-auto">
-
-                        {/* Left Side - Photo with Border and 3D Tilt */}
+                        {/* Left Side - Photo with 3D Tilt */}
                         <Animated animation="scale-in" delay={200} className="shrink-0">
                             <div
                                 ref={cardRef}
                                 className="relative"
-                                style={{ perspective: 1000 }}
+                                style={{ perspective }}
                                 onMouseMove={handleMouseMove}
                                 onMouseLeave={handleMouseLeave}
                             >
-                                {/* Card container with shadow and 3D effect */}
                                 <div
                                     className="relative w-[320px] h-[320px] md:w-[380px] md:h-[380px] lg:w-[420px] lg:h-[420px] overflow-hidden rounded-3xl bg-white shadow-2xl shadow-black/30 cursor-pointer transition-transform duration-300 ease-out hover:scale-[1.02]"
                                     style={{
@@ -125,7 +106,7 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
 
                         {/* Right Side - About Content */}
                         <Animated animation="fade-in-up" delay={400} className="flex-1">
-                            <SectionCard className="p-6 md:p-8">
+                            <GlowCard glowColor="blue" glowPosition="top-right" className="p-6 md:p-8">
                                 <div className="flex items-center gap-3 mb-4">
                                     <GeminiStarIcon size={32} />
                                     <h3 className="font-serif text-xl md:text-2xl font-bold text-white">
@@ -139,26 +120,25 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
 
                                 {/* Action Buttons */}
                                 <div className="flex flex-col sm:flex-row gap-4 justify-start">
-                                    <a
-                                        href={resumeLink}
-                                        download
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 px-6 py-3 rounded-xl text-gray-900 font-semibold transition-all duration-300 shadow-lg hover:scale-[1.02] active:scale-[0.98]"
-                                    >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                        </svg>
-                                        Download Resume
-                                    </a>
+                                    <Button asChild>
+                                        <a
+                                            href={resumeLink}
+                                            download
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <DownloadIcon className="mr-2" />
+                                            Download Resume
+                                        </a>
+                                    </Button>
                                 </div>
-                            </SectionCard>
+                            </GlowCard>
                         </Animated>
                     </div>
                 </div>
             </section>
 
-            {/* Tech Stack Section - Now from Database */}
+            {/* Tech Stack Section */}
             <Animated animation="fade-in-up" delay={200} threshold={0.2}>
                 <ToolboxSection categories={toolboxCategories} />
             </Animated>

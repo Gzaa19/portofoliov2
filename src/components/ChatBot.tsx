@@ -18,6 +18,10 @@ const SUGGESTED_QUESTIONS = [
     { text: "Skills & tools" },
     { text: "How to contact" },
     { text: "Download resume" },
+    { text: "Work experience" },
+    { text: "Education" },
+    { text: "Availability" },
+    { text: "Collaboration" },
 ];
 
 export function ChatBot() {
@@ -184,11 +188,11 @@ export function ChatBot() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[550px] max-h-[calc(100vh-150px)] bg-gray-950 rounded-2xl shadow-2xl border border-gray-800 flex flex-col overflow-hidden"
+                        className="chat-window"
                     >
-                        {/* Header - Dark */}
-                        <div className="bg-gray-900 px-5 py-4 flex items-center gap-3 border-b border-gray-800">
-                            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                        {/* Header */}
+                        <div className="chat-header">
+                            <div className="icon-circle">
                                 <GeminiStarIcon size={24} className="text-white" />
                             </div>
                             <div className="flex-1">
@@ -197,7 +201,7 @@ export function ChatBot() {
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-gray-800 rounded-lg"
+                                className="nav-link p-1 hover:bg-gray-800 rounded-lg"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -205,7 +209,7 @@ export function ChatBot() {
                             </button>
                         </div>
 
-                        {/* Messages - Dark Theme */}
+                        {/* Messages */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-950">
                             {messages.map((message) => (
                                 <motion.div
@@ -214,12 +218,7 @@ export function ChatBot() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                                 >
-                                    <div
-                                        className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${message.role === "user"
-                                            ? "bg-white text-gray-900 rounded-br-md"
-                                            : "bg-gray-800 text-gray-100 rounded-bl-md border border-gray-700"
-                                            }`}
-                                    >
+                                    <div className={message.role === "user" ? "chat-bubble-user" : "chat-bubble-assistant"}>
                                         {message.role === "assistant" ? (
                                             <ReactMarkdown
                                                 components={{
@@ -244,31 +243,6 @@ export function ChatBot() {
                                 </motion.div>
                             ))}
 
-                            {/* Suggested Questions - Dark Theme */}
-                            {showSuggestions && messages.length === 1 && !isLoading && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 }}
-                                    className="space-y-3"
-                                >
-                                    <div className="flex flex-wrap gap-2 justify-center">
-                                        {SUGGESTED_QUESTIONS.map((q, index) => (
-                                            <motion.button
-                                                key={index}
-                                                initial={{ opacity: 0, scale: 0.9 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ delay: 0.3 + index * 0.05 }}
-                                                onClick={() => handleSuggestionClick(q.text)}
-                                                className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-xs text-gray-300 hover:bg-gray-700 hover:border-gray-500 hover:text-white transition-all"
-                                            >
-                                                {q.text}
-                                            </motion.button>
-                                        ))}
-                                    </div>
-                                </motion.div>
-                            )}
-
                             {/* Loading indicator */}
                             {isLoading && (
                                 <motion.div
@@ -276,7 +250,7 @@ export function ChatBot() {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="flex justify-start"
                                 >
-                                    <div className="bg-gray-800 border border-gray-700 rounded-2xl rounded-bl-md px-4 py-3">
+                                    <div className="chat-bubble-assistant">
                                         <div className="flex items-center gap-1.5">
                                             <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                                             <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -289,9 +263,29 @@ export function ChatBot() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input - Dark Theme */}
-                        <div className="p-4 border-t border-gray-800 bg-gray-900">
-                            <div className="flex items-center gap-3">
+                        {/* Input Area */}
+                        <div className="border-t border-gray-800 bg-gray-900">
+                            {/* Quick Questions */}
+                            {showSuggestions && messages.length === 1 && !isLoading && (
+                                <div className="px-4 pt-3 pb-2">
+                                    <p className="text-xs text-gray-500 mb-2">Quick questions:</p>
+                                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                                        {SUGGESTED_QUESTIONS.map((q, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => handleSuggestionClick(q.text)}
+                                                className="quick-btn"
+                                            >
+                                                <span>{q.icon}</span>
+                                                <span>{q.text}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Text Input */}
+                            <div className={`p-4 ${showSuggestions && messages.length === 1 && !isLoading ? 'pt-2' : ''} flex items-center gap-3`}>
                                 <input
                                     ref={inputRef}
                                     type="text"
@@ -299,13 +293,13 @@ export function ChatBot() {
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyDown={handleKeyDown}
                                     placeholder="Type a message..."
-                                    className="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-1 focus:ring-gray-600 transition-all"
+                                    className="chat-input"
                                     disabled={isLoading}
                                 />
                                 <button
                                     onClick={() => sendMessage()}
                                     disabled={!input.trim() || isLoading}
-                                    className="w-10 h-10 rounded-xl bg-white text-gray-900 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-all"
+                                    className="chat-send-btn"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
