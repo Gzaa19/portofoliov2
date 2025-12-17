@@ -1,17 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-export interface SocialLink {
-    id: string;
-    name: string;
-    username: string;
-    description?: string;
-    url: string;
-    iconName: string;
-    iconBg?: string;
-    isActive: boolean;
-}
+import type { SocialLink } from "@/types/types";
 
 const iconOptions = [
     { name: "GitHubIcon", label: "GitHub" },

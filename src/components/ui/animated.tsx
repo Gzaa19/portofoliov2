@@ -42,6 +42,7 @@ const delayClasses: Record<number, string> = {
 
 /**
  * Animated - Wrapper component for applying CSS animations on scroll
+ * Automatically reduces animations on mobile devices for better performance
  */
 export function Animated({
     children,
@@ -53,10 +54,43 @@ export function Animated({
 }: AnimatedProps) {
     const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+    // Detect mobile and reduced motion preference
+    useEffect(() => {
+        // Check for mobile device (max-width: 768px)
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        // Check for reduced motion preference
+        const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        setPrefersReducedMotion(motionQuery.matches);
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        const handleMotionChange = (e: MediaQueryListEvent) => {
+            setPrefersReducedMotion(e.matches);
+        };
+        motionQuery.addEventListener('change', handleMotionChange);
+
+        return () => {
+            window.removeEventListener('resize', checkMobile);
+            motionQuery.removeEventListener('change', handleMotionChange);
+        };
+    }, []);
 
     useEffect(() => {
         const element = ref.current;
         if (!element) return;
+
+        // If reduced motion is preferred, show immediately
+        if (prefersReducedMotion) {
+            setIsVisible(true);
+            return;
+        }
 
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -77,19 +111,41 @@ export function Animated({
         return () => {
             if (element) observer.unobserve(element);
         };
-    }, [once, threshold]);
+    }, [once, threshold, prefersReducedMotion]);
+
+    // If user prefers reduced motion, render without animation
+    if (prefersReducedMotion) {
+        return (
+            <div ref={ref} className={className}>
+                {children}
+            </div>
+        );
+    }
 
     return (
         <div
             ref={ref}
             className={cn(
-                // Base state (hidden) until visible
-                "transition-opacity duration-500",
-                !isVisible && "opacity-0 translate-y-8 invisible", // Simple pre-animation state
+                // Base transition - shorter on mobile, heavier on desktop
+                isMobile
+                    ? "transition-all duration-300 ease-out"
+                    : "transition-all duration-1000",
+                // Pre-animation state - lighter on mobile
+                !isVisible && (isMobile
+                    ? "opacity-0 translate-y-4"
+                    : "opacity-0 translate-y-16 blur-md scale-[0.92]"),
+                // Visible state
+                isVisible && "opacity-100 translate-y-0 blur-0 scale-100",
                 isVisible && animationClasses[animation],
                 isVisible && delayClasses[delay],
                 className
             )}
+            style={{
+                willChange: isVisible ? 'auto' : 'opacity, transform, filter',
+                transitionTimingFunction: isMobile
+                    ? 'ease-out'
+                    : 'cubic-bezier(0.22, 1, 0.36, 1)',
+            }}
         >
             {children}
         </div>

@@ -5,18 +5,7 @@ import { techStackOptions } from "@/lib/techStackOptions";
 import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
 import { MdSearch, MdClose } from "react-icons/md";
-
-export interface Project {
-    id: string;
-    slug: string;
-    title: string;
-    description: string;
-    image?: string;
-    link?: string;
-    github?: string;
-    featured: boolean;
-    tags: { id: string; name: string; slug: string; color?: string }[];
-}
+import type { Project } from "@/types/types";
 
 interface ProjectsManagerProps {
     initialProjects: Project[];

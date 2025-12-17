@@ -6,17 +6,7 @@ import {
     DiscordIcon,
     SpotifyIcon
 } from "@/components/SocialIcons";
-
-export interface SocialLink {
-    id: string;
-    name: string;
-    username: string;
-    description: string | null;
-    url: string;
-    iconName: string;
-    iconBg: string;
-    isActive: boolean;
-}
+import type { SocialLink } from "@/types/types";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string; size?: number }>> = {
     GitHubIcon,

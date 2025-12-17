@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import "./globals.css";
 import { ConditionalHeader } from "@/components/ConditionalHeader";
 import { ChatBotWrapper } from "@/components/ChatBotWrapper";
+import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,10 +35,14 @@ export default function RootLayout({
           "bg-background text-foreground antialiased font-sans"
         )}
       >
-        <ConditionalHeader />
-        {children}
-        <ChatBotWrapper />
+        <SmoothScrollProvider>
+          <ConditionalHeader />
+          {children}
+          <ChatBotWrapper />
+        </SmoothScrollProvider>
       </body>
     </html>
   );
 }
+
+

@@ -164,3 +164,18 @@ model Profile {
 
   @@map("profiles")
 }
+
+// ==========================================
+// HeroSettings Model - Untuk mengatur Hero section
+// ==========================================
+model HeroSettings {
+  id        String   @id @default(cuid())
+  name      String // Nama yang ditampilkan (e.g., "Gzaaa")
+  role      String // Role/title (e.g., "Full Stack Developer")
+  status    String   @default("available") // "available", "busy", "new_project"
+  isActive  Boolean  @default(true) // Hanya 1 yang aktif
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("hero_settings")
+}

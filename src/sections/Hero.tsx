@@ -3,12 +3,32 @@
 import Image from "next/image";
 import Link from "next/link";
 import memojiImage from "@/assets/images/memoji-computer.png";
-import { StatusBadge, Animated, Button } from "@/components/ui";
+import { StatusBadge, Button } from "@/components/ui";
+
+interface HeroProps {
+    name?: string;
+    role?: string;
+    status?: "available" | "busy" | "new_project";
+}
 
 /**
  * Hero section - main landing component
+ * Content appears immediately without scroll animations
  */
-export function Hero() {
+export function Hero({
+    name = "Gzaaa",
+    role = "Full Stack Developer",
+    status = "busy"
+}: HeroProps) {
+    // Map status to StatusBadge variant and text
+    const statusConfig = {
+        available: { variant: "available" as const, text: "Available" },
+        busy: { variant: "busy" as const, text: "Not Available" },
+        new_project: { variant: "busy" as const, text: "New Project" },
+    };
+
+    const currentStatus = statusConfig[status] || statusConfig.busy;
+
     return (
         <div className="py-32 md:py-48 lg:py-60 relative z-0 overflow-x-clip bg-white">
             {/* Hero rings with CSS animation */}
@@ -20,36 +40,30 @@ export function Hero() {
             <div className="container mx-auto relative z-10">
                 <div className="flex flex-col items-center">
                     {/* Avatar */}
-                    <Animated animation="fade-in">
-                        <Image
-                            src={memojiImage}
-                            className="size-[150px]"
-                            alt="Developer avatar"
-                            priority
-                        />
-                    </Animated>
+                    <Image
+                        src={memojiImage}
+                        className="size-[150px]"
+                        alt="Developer avatar"
+                        priority
+                    />
 
                     {/* Status Badge */}
-                    <Animated animation="fade-in-up" delay={100}>
-                        <StatusBadge variant="busy" text="Not Available" />
-                    </Animated>
+                    <div className="mt-4">
+                        <StatusBadge variant={currentStatus.variant} text={currentStatus.text} />
+                    </div>
 
                     {/* Heading */}
-                    <Animated animation="fade-in-up" delay={200} className="max-w-lg mx-auto">
+                    <div className="max-w-lg mx-auto">
                         <h1 className="font-serif text-3xl md:text-5xl text-center mt-8 tracking-wide text-gray-900">
-                            Hello, I'm Gzaaa
+                            Hello, I'm {name}
                         </h1>
                         <p className="mt-4 text-center text-gray-500 md:text-lg font-sans">
-                            Full Stack Developer
+                            {role}
                         </p>
-                    </Animated>
+                    </div>
 
                     {/* CTA Buttons */}
-                    <Animated
-                        animation="fade-in-up"
-                        delay={300}
-                        className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4"
-                    >
+                    <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
                         <Button variant="outline" size="lg" asChild>
                             <Link href="/projects">
                                 Explore My Work
@@ -60,7 +74,7 @@ export function Hero() {
                                 Let's Connect
                             </Link>
                         </Button>
-                    </Animated>
+                    </div>
                 </div>
             </div>
         </div>

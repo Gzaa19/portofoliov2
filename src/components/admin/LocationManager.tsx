@@ -1,16 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-
-export interface Location {
-    id: string;
-    name: string;
-    address?: string;
-    latitude: number;
-    longitude: number;
-    zoom: number;
-    isActive: boolean;
-}
+import type { Location } from "@/types/types";
 
 interface GeocodingResult {
     id: number;

@@ -3,14 +3,7 @@
 import Link from "next/link";
 import { IconType } from "react-icons";
 import { MdFolder, MdLocalOffer, MdLink, MdLocationOn, MdAdd, MdLightbulb, MdChevronRight } from "react-icons/md";
-
-export interface DashboardStats {
-    projects: number;
-    tags: number;
-    socialLinks: number;
-    hasLocation: boolean;
-    locationName?: string;
-}
+import type { DashboardStats } from "@/types/types";
 
 interface DashboardManagerProps {
     initialStats: DashboardStats;

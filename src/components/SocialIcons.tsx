@@ -8,13 +8,13 @@ interface IconProps {
 }
 
 /**
- * GitHub Icon
+ * GitHub Icon - White by default
  */
 export function GitHubIcon({ className, size = 32 }: IconProps) {
     return (
         <svg
             viewBox="0 0 24 24"
-            className={cn("fill-current", className)}
+            className={cn("fill-current text-white", className)}
             width={size}
             height={size}
         >

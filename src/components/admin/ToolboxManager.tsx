@@ -5,24 +5,7 @@ import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
 import { techStackOptions } from "@/lib/techStackOptions";
 import { MdSearch, MdClose } from "react-icons/md";
-
-export interface ToolboxItem {
-    id: string;
-    name: string;
-    iconName: string;
-    color: string;
-    order: number;
-    isActive: boolean;
-    categoryId: string;
-}
-
-export interface ToolboxCategory {
-    id: string;
-    name: string;
-    order: number;
-    isActive: boolean;
-    items: ToolboxItem[];
-}
+import type { ToolboxItem, ToolboxCategory } from "@/types/types";
 
 interface ToolboxManagerProps {
     initialCategories: ToolboxCategory[];

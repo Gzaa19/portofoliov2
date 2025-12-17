@@ -5,21 +5,7 @@ import { IconType } from "react-icons";
 import { cn } from "@/lib/utils";
 import { SectionCard } from "@/components/SectionCard";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
-
-export interface ToolboxItem {
-    id: string;
-    name: string;
-    iconName: string;
-    color: string;
-    order: number;
-}
-
-export interface ToolboxCategory {
-    id: string;
-    name: string;
-    order: number;
-    items: ToolboxItem[];
-}
+import type { ToolboxItem, ToolboxCategory } from "@/types/types";
 
 interface ToolboxSectionProps {
     categories?: ToolboxCategory[];
@@ -74,10 +60,14 @@ export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
                                                 className={cn(
                                                     "flex flex-col items-center justify-center",
                                                     "aspect-square w-full md:w-28 md:h-28 md:aspect-auto",
-                                                    "rounded-2xl bg-white border border-gray-200",
-                                                    "hover:border-blue-400 transition-all duration-300",
-                                                    "cursor-pointer group p-2 md:p-0 shadow-sm",
-                                                    "hover:scale-[1.08] hover:-translate-y-1 animate-scale-in"
+                                                    // Glassmorphism effect
+                                                    "rounded-2xl bg-white/10 backdrop-blur-md",
+                                                    "border border-white/20",
+                                                    "hover:bg-white/20 hover:border-white/40",
+                                                    "transition-all duration-300",
+                                                    "cursor-pointer group p-2 md:p-0",
+                                                    "hover:scale-[1.08] hover:-translate-y-1 animate-scale-in",
+                                                    "shadow-lg shadow-black/10"
                                                 )}
                                                 style={{
                                                     animationDelay: `${index * 0.08 + categoryIndex * 0.15}s`,
@@ -102,7 +92,7 @@ export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <span className="text-gray-600 text-[10px] md:text-sm font-medium text-center group-hover:text-gray-900 transition-colors truncate w-full px-1">
+                                                <span className="text-white/80 text-[10px] md:text-sm font-medium text-center group-hover:text-white transition-colors truncate w-full px-1">
                                                     {item.name}
                                                 </span>
                                             </div>
