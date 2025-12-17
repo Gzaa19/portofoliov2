@@ -21,7 +21,7 @@ export function SectionCard({
     return (
         <div
             className={cn(
-                "relative rounded-3xl bg-gray-50 border border-gray-200 overflow-hidden shadow-sm",
+                "relative rounded-3xl bg-black border border-gray-800 overflow-hidden shadow-lg",
                 animate && "animate-fade-in-up",
                 className
             )}

@@ -80,7 +80,7 @@ export const ContactView = ({ socialLinks }: ContactViewProps) => {
                         return (
                             <SectionCard
                                 key={social.id}
-                                className="hover:border-gray-300 transition-all duration-300 cursor-pointer group"
+                                className="hover:border-gray-500 transition-all duration-300 cursor-pointer group"
                             >
                                 <Link
                                     href={social.url}
@@ -90,7 +90,7 @@ export const ContactView = ({ socialLinks }: ContactViewProps) => {
                                 >
                                     <div className="flex items-start gap-4">
                                         {/* Icon */}
-                                        <div className="p-3 rounded-xl bg-gray-50 border border-gray-200 group-hover:bg-white group-hover:scale-110 transition-all duration-300 shadow-sm relative overflow-hidden">
+                                        <div className="p-3 rounded-xl bg-gray-800 border border-gray-600 group-hover:bg-gray-700 group-hover:scale-110 transition-all duration-300 shadow-sm relative overflow-hidden">
                                             {/* Glow effect matching brand color on hover */}
                                             <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${(social.iconBg || '').replace('bg-', 'bg-')}`} />
 
@@ -99,20 +99,20 @@ export const ContactView = ({ socialLinks }: ContactViewProps) => {
 
                                         {/* Content */}
                                         <div className="flex-1">
-                                            <h3 className="font-semibold text-lg text-gray-900 group-hover:text-blue-600 transition-colors">
+                                            <h3 className="font-semibold text-lg text-white group-hover:text-blue-400 transition-colors">
                                                 {social.name}
                                             </h3>
-                                            <p className="text-gray-500 text-sm font-medium">
+                                            <p className="text-gray-400 text-sm font-medium">
                                                 {social.username}
                                             </p>
                                             {social.description && (
-                                                <p className="text-gray-500 text-sm mt-2 leading-relaxed">
+                                                <p className="text-gray-400 text-sm mt-2 leading-relaxed">
                                                     {social.description}
                                                 </p>
                                             )}
 
                                             {/* Visit Button */}
-                                            <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors group/link">
+                                            <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white hover:text-gray-300 transition-colors group/link">
                                                 Visit Profile
                                                 <ArrowIcon className="transform group-hover/link:translate-x-1 transition-transform" />
                                             </div>

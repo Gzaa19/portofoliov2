@@ -128,12 +128,12 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
                             <SectionCard className="p-6 md:p-8">
                                 <div className="flex items-center gap-3 mb-4">
                                     <GeminiStarIcon size={32} />
-                                    <h3 className="font-serif text-xl md:text-2xl font-bold text-gray-900">
+                                    <h3 className="font-serif text-xl md:text-2xl font-bold text-white">
                                         Description
                                     </h3>
                                 </div>
 
-                                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6 whitespace-pre-wrap">
+                                <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-6 whitespace-pre-wrap">
                                     {description}
                                 </p>
 
@@ -144,7 +144,7 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
                                         download
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                                        className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 px-6 py-3 rounded-xl text-gray-900 font-semibold transition-all duration-300 shadow-lg hover:scale-[1.02] active:scale-[0.98]"
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />

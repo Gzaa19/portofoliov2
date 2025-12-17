@@ -45,12 +45,12 @@ export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
                     {/* Header */}
                     <div className="flex items-center gap-3 mb-4">
                         <GeminiStarIcon size={40} />
-                        <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
+                        <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-white">
                             My Toolbox
                         </h2>
                     </div>
 
-                    <p className="text-gray-500 text-sm md:text-base mb-10 max-w-xl">
+                    <p className="text-gray-400 text-sm md:text-base mb-10 max-w-xl">
                         Explore the technologies and tools I use to craft exceptional digital experiences.
                     </p>
 

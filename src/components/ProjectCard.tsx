@@ -30,18 +30,18 @@ export function ProjectCard({
     return (
         <div
             className={cn(
-                "group relative h-full flex flex-col rounded-3xl bg-white border border-gray-200 overflow-hidden shadow-sm cq-container",
-                "hover:shadow-lg transition-all duration-300 hover:-translate-y-2 animate-fade-in-up",
+                "group relative h-full flex flex-col rounded-3xl bg-black border border-gray-800 overflow-hidden shadow-lg cq-container",
+                "hover:shadow-xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up",
                 className
             )}
         >
             {/* Animated Border on Hover */}
-            <div className="absolute inset-0 rounded-3xl border border-gray-200 group-hover:border-blue-400/50 transition-colors duration-500" />
+            <div className="absolute inset-0 rounded-3xl border border-gray-800 group-hover:border-blue-400/50 transition-colors duration-500" />
 
             {/* Project Image */}
             {image && (
                 <div className="relative h-48 md:h-56 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-10" />
                     <Image
                         src={image}
                         alt={title}
@@ -53,22 +53,22 @@ export function ProjectCard({
 
             {/* Placeholder for projects without image */}
             {!image && (
-                <div className="relative h-48 md:h-56 overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center">
+                <div className="relative h-48 md:h-56 overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                     <div className="text-6xl opacity-30 animate-float">🚀</div>
                 </div>
             )}
 
             {/* Content */}
             <div className="relative z-10 p-6 grow flex flex-col">
-                <h3 className="project-title">{title}</h3>
-                <p className="text-gray-500 text-sm md:text-base leading-relaxed mb-4 line-clamp-3 grow">
+                <h3 className="text-xl md:text-2xl font-serif font-bold text-white mb-2">{title}</h3>
+                <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-4 line-clamp-3 grow">
                     {description}
                 </p>
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-3 pt-2 mt-auto">
                     {detailLink && (
-                        <Button size="sm" asChild>
+                        <Button size="sm" className="bg-white text-black hover:bg-gray-200" asChild>
                             <Link href={detailLink}>
                                 View Project
                                 <svg
@@ -88,7 +88,7 @@ export function ProjectCard({
             </div>
 
             {/* Shimmer Effect on Hover */}
-            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-blue-50/30 to-transparent" />
+            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         </div>
     );
 }
