@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 
 // GET all social links
@@ -47,6 +48,10 @@ export async function POST(request: Request) {
                 isActive: isActive ?? true,
             },
         });
+
+        // Revalidate pages that display social links
+        revalidatePath('/');
+        revalidatePath('/contact');
 
         return NextResponse.json(socialLink, { status: 201 });
     } catch (error) {

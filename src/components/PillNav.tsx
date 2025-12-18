@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
+import { THEME_COLORS } from '@/lib/theme';
 
 export type PillNavItem = {
   label: string;
@@ -32,14 +33,15 @@ const PillNav: React.FC<PillNavProps> = ({
   activeHref,
   className = '',
   ease = 'power3.easeOut',
-  baseColor = '#fff',
-  pillColor = '#060010',
-  hoveredPillTextColor = '#060010',
+  // Use theme colors as defaults
+  baseColor = THEME_COLORS.nav.bgHex,
+  pillColor = THEME_COLORS.nav.pillBgHex,
+  hoveredPillTextColor = THEME_COLORS.nav.pillHoverTextHex,
   pillTextColor,
   onMobileMenuClick,
   initialLoadAnimation = true
 }) => {
-  const resolvedPillTextColor = pillTextColor ?? baseColor;
+  const resolvedPillTextColor = pillTextColor ?? THEME_COLORS.nav.pillTextHex;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const circleRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const tlRefs = useRef<Array<gsap.core.Timeline | null>>([]);
@@ -146,7 +148,7 @@ const PillNav: React.FC<PillNavProps> = ({
     if (!tl) return;
     activeTweenRefs.current[i]?.kill();
     activeTweenRefs.current[i] = tl.tweenTo(tl.duration(), {
-      duration: 0.3,
+      duration: 0.8,
       ease,
       overwrite: 'auto'
     });
@@ -157,7 +159,7 @@ const PillNav: React.FC<PillNavProps> = ({
     if (!tl) return;
     activeTweenRefs.current[i]?.kill();
     activeTweenRefs.current[i] = tl.tweenTo(0, {
-      duration: 0.2,
+      duration: 0.7,
       ease,
       overwrite: 'auto'
     });
@@ -259,10 +261,10 @@ const PillNav: React.FC<PillNavProps> = ({
 
         <div
           ref={navItemsRef}
-          className="relative items-center rounded-full hidden md:flex ml-2"
+          className="relative items-center rounded-full hidden md:flex ml-2 border border-gray-200/60 shadow-lg shadow-black/5 backdrop-blur-xl"
           style={{
             height: 'var(--nav-h)',
-            background: 'var(--base, #000)'
+            background: 'var(--base, #F1F5F9)'
           }}
         >
           <ul

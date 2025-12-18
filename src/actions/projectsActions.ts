@@ -1,7 +1,7 @@
 // ==========================================
 // Project Actions - State management untuk Projects
 // ==========================================
-
+'use server';
 import type { Project } from "@/types/types";
 
 export interface ProjectsState {

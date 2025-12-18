@@ -1,7 +1,7 @@
 // ==========================================
 // Hero Actions - State management untuk Hero Settings
 // ==========================================
-
+'use server';
 import type { HeroSettings } from "@/types/types";
 
 export interface HeroState {

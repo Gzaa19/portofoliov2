@@ -20,6 +20,7 @@ export interface FeaturedProject {
 export interface ProjectTag {
     id: string;
     name: string;
+    iconName: string | null;
     color: string | null;
 }
 

@@ -3,6 +3,7 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
+import { THEME_COLORS } from '@/lib/theme';
 
 interface AntigravityProps {
     count?: number;
@@ -30,7 +31,8 @@ const AntigravityInner: React.FC<AntigravityProps> = ({
     waveAmplitude = 0.8,
     particleSize = 0.6,
     lerpSpeed = 0.1,
-    color = '#4285F4',
+    // Use Royal Blue from theme (gradient text color)
+    color = THEME_COLORS.primaryHex,
     autoAnimate = true,
     particleVariance = 1,
     rotationSpeed = 0,

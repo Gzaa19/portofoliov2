@@ -8,32 +8,39 @@ interface GlowCardProps extends React.HTMLAttributes<HTMLDivElement> {
     glowPosition?: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "center";
     glowSize?: "sm" | "md" | "lg";
     animate?: boolean;
+    variant?: "default" | "themed";
 }
 
 /**
  * GlowCard - A card with subtle glow effect
- * Used for content sections with glassmorphism effect
+ * Uses theme variables from globals.css for consistent styling
  * 
  * @example
- * <GlowCard glowColor="blue" glowPosition="top-right">
+ * <GlowCard glowColor="primary" glowPosition="top-right">
  *   Content here
  * </GlowCard>
  */
 function GlowCard({
     children,
     className,
-    glowColor = "blue",
+    glowColor = "primary",
     glowPosition = "top-right",
     glowSize = "md",
     animate = true,
+    variant = "themed",
     ...props
 }: GlowCardProps) {
     const glowColors: Record<string, string> = {
-        blue: "bg-blue-500/10",
-        purple: "bg-purple-500/10",
-        green: "bg-green-500/10",
-        pink: "bg-pink-500/10",
-        orange: "bg-orange-500/10",
+        primary: "bg-[var(--theme-primary)]/15",
+        blue: "bg-blue-500/15",
+        sky: "bg-sky-200/30",
+        cyan: "bg-cyan-200/25",
+        purple: "bg-purple-500/15",
+        violet: "bg-violet-500/20",
+        green: "bg-green-500/15",
+        pink: "bg-pink-500/15",
+        orange: "bg-orange-500/15",
+        white: "bg-white/20",
     };
 
     const positions: Record<string, string> = {
@@ -50,20 +57,37 @@ function GlowCard({
         lg: "w-96 h-96",
     };
 
+    // Use themed style (reads from CSS variables in globals.css)
+    const cardStyle: React.CSSProperties = variant === "themed" ? {
+        background: "var(--theme-card-bg)",
+        borderColor: "var(--theme-card-border)",
+        color: "var(--theme-card-text)",
+    } : {};
+
     return (
         <div
             className={cn(
-                "relative rounded-3xl bg-black border border-gray-800 overflow-hidden shadow-lg",
+                // Base styles
+                "relative rounded-3xl overflow-hidden",
+                // Border
+                "border",
+                // Backdrop blur for glassmorphism
+                "backdrop-blur-sm",
+                // Shadow
+                variant === "themed"
+                    ? "shadow-sm"
+                    : "bg-black border-gray-800 shadow-lg",
                 animate && "animate-fade-in-up",
                 className
             )}
+            style={cardStyle}
             {...props}
         >
             {/* Glow effect */}
             <div
                 className={cn(
-                    "absolute blur-3xl rounded-full pointer-events-none",
-                    glowColors[glowColor] || glowColors.blue,
+                    "absolute blur-3xl rounded-full pointer-events-none opacity-60",
+                    glowColors[glowColor] || glowColors.primary,
                     positions[glowPosition],
                     sizes[glowSize]
                 )}
@@ -78,3 +102,5 @@ function GlowCard({
 }
 
 export { GlowCard };
+
+

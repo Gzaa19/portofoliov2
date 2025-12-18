@@ -3,6 +3,7 @@
 import Folder from "@/components/Folder";
 import { FolderProjectCard } from "@/components/FolderProjectCard";
 import { GradientText } from "@/components/ui";
+import { GRADIENT_PRESETS, THEME_COLORS } from "@/lib/theme";
 import type { FeaturedProject } from "@/data";
 
 interface FeaturedProjectsProps {
@@ -29,18 +30,24 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
     ));
 
     return (
-        <section className="py-20 lg:py-28 bg-white">
+        <section
+            className="py-20 lg:py-28"
+            style={{ backgroundColor: 'var(--theme-bg)' }}
+        >
             <div className="container mx-auto px-4">
                 {/* Section Header */}
                 <div className="text-center mb-8">
                     <GradientText
-                        colors={['#4285f4', '#9b72cb', '#d96570', '#9b72cb', '#4285f4']}
+                        colors={GRADIENT_PRESETS.cleanSaas}
                         animationSpeed={6}
                         className="section-title"
                     >
                         Featured Projects
                     </GradientText>
-                    <p className="mt-4 text-gray-500 md:text-lg font-sans max-w-md mx-auto">
+                    <p
+                        className="mt-4 md:text-lg font-sans max-w-md mx-auto"
+                        style={{ color: 'var(--theme-text-body)' }}
+                    >
                         Click the folder to explore my recent work
                     </p>
                 </div>
@@ -48,7 +55,7 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
                 {/* Folder with Projects - with proper spacing */}
                 <div className="flex justify-center items-center min-h-[250px] mt-6">
                     <Folder
-                        color="#4285F4"
+                        color={THEME_COLORS.primaryHex}
                         size={1.8}
                         items={folderItems}
                         className="cursor-pointer"

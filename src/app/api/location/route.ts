@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 
 // GET location
@@ -88,6 +89,10 @@ export async function POST(request: Request) {
                 isActive: true,
             },
         });
+
+        // Revalidate pages that display location
+        revalidatePath('/');
+        revalidatePath('/contact');
 
         return NextResponse.json(location, { status: 201 });
     } catch (error) {

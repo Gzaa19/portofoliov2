@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { GradientText } from "./gradient-text";
+import { GRADIENT_PRESETS } from "@/lib/theme";
 
 interface PageHeaderProps {
     title: string;
@@ -14,6 +15,7 @@ interface PageHeaderProps {
 
 /**
  * PageHeader - Consistent page header with gradient title
+ * Uses theme from globals.css
  * 
  * @example
  * <PageHeader 
@@ -25,7 +27,7 @@ function PageHeader({
     title,
     description,
     className,
-    gradientColors = ['#4285f4', '#9b72cb', '#d96570', '#9b72cb', '#4285f4'],
+    gradientColors = GRADIENT_PRESETS.cleanSaas,
     children,
 }: PageHeaderProps) {
     return (
@@ -39,7 +41,10 @@ function PageHeader({
             </GradientText>
 
             {description && (
-                <p className="mt-4 text-gray-500 md:text-lg font-sans max-w-2xl mx-auto leading-relaxed">
+                <p
+                    className="mt-4 md:text-lg font-sans max-w-2xl mx-auto leading-relaxed"
+                    style={{ color: 'var(--theme-text-body)' }}
+                >
                     {description}
                 </p>
             )}
@@ -50,3 +55,4 @@ function PageHeader({
 }
 
 export { PageHeader };
+

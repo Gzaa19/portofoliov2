@@ -9,7 +9,10 @@ type IconSize = "xs" | "sm" | "md" | "lg";
 
 interface TechStackIconProps {
     name: string;
+    iconName?: string;  // Direct icon name from database (e.g., "SiDart")
+    iconColor?: string; // Direct color from database (e.g., "#0175C2")
     showLabel?: boolean;
+    showBackground?: boolean;
     size?: IconSize;
     className?: string;
 }
@@ -39,44 +42,52 @@ const sizeConfig: Record<IconSize, { container: string; icon: string; text: stri
 
 /**
  * TechStackIcon - Displays technology icons from react-icons/si
+ * Priority: iconName/iconColor props > techStackOptions lookup
  */
 export function TechStackIcon({
     name,
+    iconName,
+    iconColor,
     showLabel = true,
+    showBackground = true,
     size = "sm",
     className
 }: TechStackIconProps) {
+    // Fallback to techStackOptions if iconName not provided
     const techOption = techStackOptions.find(
         (opt) => opt.name.toLowerCase() === name.toLowerCase()
     );
 
-    const getIcon = (iconName: string): IconType | null => {
+    const getIcon = (iconNameStr: string): IconType | null => {
         const icons = SiIcons as Record<string, IconType>;
-        return icons[iconName] || null;
+        return icons[iconNameStr] || null;
     };
 
-    const IconComp = techOption ? getIcon(techOption.icon) : null;
-    const color = techOption?.color || "#888888";
+    // Priority: props > techStackOptions
+    const resolvedIconName = iconName || techOption?.icon;
+    const resolvedColor = iconColor || techOption?.color || "#888888";
+
+    const IconComp = resolvedIconName ? getIcon(resolvedIconName) : null;
     const config = sizeConfig[size];
 
     return (
         <div
             className={cn(
                 "flex flex-col items-center justify-center rounded-xl",
-                "bg-gray-800/80 border border-white/5",
-                "hover:border-white/20 transition-all duration-200",
+                showBackground && "bg-gray-800/80 border border-white/5 hover:border-white/20",
+                "transition-all duration-200",
                 config.container,
                 className
             )}
         >
             {IconComp ? (
                 <IconComp
-                    className={cn(config.icon, "mb-1")}
-                    style={{ color }}
+                    className={cn(config.icon, showLabel && "mb-1")}
+                    style={{ color: resolvedColor }}
                 />
-            ) : (
-                <div className={cn(config.icon, "mb-1 bg-gray-600 rounded")} />
-            )}
+            ) : showBackground ? (
+                <div className={cn(config.icon, showLabel && "mb-1", "bg-gray-600 rounded")} />
+            ) : null}
             {showLabel && (
                 <span className={cn(
                     "text-white/60 text-center leading-tight truncate w-full px-0.5",
@@ -90,3 +101,4 @@ export function TechStackIcon({
 }
 
 export default TechStackIcon;
+

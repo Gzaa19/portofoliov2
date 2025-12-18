@@ -41,7 +41,7 @@ export function StatusBadge({
 
     return (
         <div className={cn(
-            "bg-gray-900 border border-gray-800 px-4 py-1.5 inline-flex items-center gap-4 rounded-lg",
+            "bg-[var(--theme-bg-secondary)] border border-[var(--theme-card-border)] px-4 py-1.5 inline-flex items-center gap-4 rounded-lg shadow-sm",
             className
         )}>
             <div className="relative flex items-center justify-center">
@@ -52,7 +52,7 @@ export function StatusBadge({
                 {/* Core LED dot */}
                 <div className={cn("relative size-2.5 rounded-full", styles.dot, styles.animation)} />
             </div>
-            <span className="text-sm font-medium text-white">{text}</span>
+            <span className="text-sm font-medium text-[var(--theme-text-heading)]">{text}</span>
         </div>
     );
 }

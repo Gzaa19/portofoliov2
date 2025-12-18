@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 
 interface Params {
@@ -64,6 +65,10 @@ export async function PUT(request: Request, { params }: Params) {
             },
         });
 
+        // Revalidate pages that display social links
+        revalidatePath('/');
+        revalidatePath('/contact');
+
         return NextResponse.json(socialLink);
     } catch (error) {
         console.error('Error updating social link:', error);
@@ -93,6 +98,10 @@ export async function DELETE(request: Request, { params }: Params) {
         await prisma.socialLink.delete({
             where: { id },
         });
+
+        // Revalidate pages that display social links
+        revalidatePath('/');
+        revalidatePath('/contact');
 
         return NextResponse.json({ message: 'Social link deleted successfully' });
     } catch (error) {

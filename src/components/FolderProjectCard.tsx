@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { THEME_COLORS } from "@/lib/theme";
 
 interface FolderProjectCardProps {
     title: string;
@@ -13,6 +14,7 @@ interface FolderProjectCardProps {
 
 /**
  * Mini Project Card for Folder component - shows image + title, navigates on click
+ * Uses theme colors from theme.ts
  */
 export function FolderProjectCard({
     title,
@@ -32,14 +34,18 @@ export function FolderProjectCard({
             onClick={handleClick}
             className={cn(
                 "w-full h-full rounded-lg overflow-hidden cursor-pointer",
-                "bg-white shadow-sm",
+                "shadow-sm",
                 "hover:shadow-lg hover:scale-105 transition-all duration-200",
                 "flex flex-col",
                 className
             )}
+            style={{ backgroundColor: THEME_COLORS.bgSecondaryHex }}
         >
             {/* Project Image */}
-            <div className="relative flex-1 overflow-hidden bg-gray-100">
+            <div
+                className="relative flex-1 overflow-hidden"
+                style={{ backgroundColor: THEME_COLORS.bgSecondaryHex }}
+            >
                 {image ? (
                     <Image
                         src={image}
@@ -48,15 +54,29 @@ export function FolderProjectCard({
                         className="object-cover"
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+                    <div
+                        className="w-full h-full flex items-center justify-center"
+                        style={{
+                            background: `linear-gradient(135deg, ${THEME_COLORS.bgSecondaryHex} 0%, #E2E8F0 100%)`
+                        }}
+                    >
                         <span className="text-lg">🚀</span>
                     </div>
                 )}
             </div>
 
-            {/* Title below image */}
-            <div className="p-1.5 bg-white border-t border-gray-200">
-                <h4 className="text-[8px] font-serif font-bold text-gray-900 text-center leading-tight truncate">
+            {/* Title below image - Light Slate/Teal theme */}
+            <div
+                className="p-1.5 border-t"
+                style={{
+                    backgroundColor: THEME_COLORS.bgSecondaryHex,
+                    borderColor: '#E2E8F0'
+                }}
+            >
+                <h4
+                    className="text-[8px] font-serif font-bold text-center leading-tight truncate"
+                    style={{ color: THEME_COLORS.headingHex }}
+                >
                     {title}
                 </h4>
             </div>
@@ -65,4 +85,5 @@ export function FolderProjectCard({
 }
 
 export default FolderProjectCard;
+
 

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { GradientText } from "@/components/ui";
+import { GRADIENT_PRESETS } from "@/lib/theme";
 
 interface ProjectTag {
     id: string;
@@ -47,7 +48,7 @@ export function ProjectHero({ title, image, tags, className }: ProjectHeroProps)
             {/* Title overlay on image */}
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-20">
                 <GradientText
-                    colors={['#4285f4', '#9b72cb', '#d96570', '#9b72cb', '#4285f4']}
+                    colors={GRADIENT_PRESETS.cleanSaas}
                     animationSpeed={6}
                     className="text-3xl md:text-5xl font-bold font-serif mb-4"
                 >

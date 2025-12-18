@@ -2,13 +2,13 @@ import { PageLayout, PageHeader, EmptyState } from "@/components/ui";
 import { ProjectsGrid } from "@/components/projects";
 import { getAllProjects } from "@/data";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export default async function ProjectsPage() {
     const projects = await getAllProjects();
 
     return (
-        <PageLayout particleCount={800}>
+        <PageLayout showParticles={false}>
             {/* Header Section */}
             <div className="pointer-events-auto">
                 <PageHeader

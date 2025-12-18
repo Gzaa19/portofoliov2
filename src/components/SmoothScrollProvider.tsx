@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, createContext, useContext } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -22,11 +23,20 @@ export function useLenis() {
  * - Smooth scrolling
  * - GPU-accelerated animations  
  * - ScrollTrigger untuk scroll-based animations
+ * 
+ * Note: Disabled on admin pages to prevent scroll conflicts
  */
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
     const lenisRef = useRef<Lenis | null>(null);
+    const pathname = usePathname();
+    const isAdminPage = pathname?.startsWith("/admin");
 
     useEffect(() => {
+        // Skip Lenis initialization on admin pages
+        if (isAdminPage) {
+            return;
+        }
+
         // Initialize Lenis smooth scroll
         lenisRef.current = new Lenis({
             duration: 1.2,
@@ -156,7 +166,7 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
                 lenisRef.current?.raf(time * 1000);
             });
         };
-    }, []);
+    }, [isAdminPage]);
 
     return (
         <LenisContext.Provider value={lenisRef.current}>

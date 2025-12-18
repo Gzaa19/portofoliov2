@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowIcon, GitHubIcon, LinkedInIcon, EmailIcon, InstagramIcon, DiscordIcon, SpotifyIcon } from "@/components/SocialIcons";
-import { PageLayout, PageHeader, GlowCard } from "@/components/ui";
+import { PageLayout, PageHeader, GlowCard, Animated } from "@/components/ui";
 import type { SocialLink } from "@/data";
 
 interface ContactViewProps {
@@ -19,9 +19,19 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; size?: n
     SpotifyIcon,
 };
 
+// Map icon to brand colors
+const iconColorMap: Record<string, string> = {
+    GitHubIcon: "#181717",      // GitHub black
+    EmailIcon: "#EA4335",       // Gmail red
+    LinkedInIcon: "#0A66C2",    // LinkedIn blue
+    InstagramIcon: "#E4405F",   // Instagram pink
+    DiscordIcon: "#5865F2",     // Discord purple
+    SpotifyIcon: "#1DB954",     // Spotify green
+};
+
 export const ContactView = ({ socialLinks }: ContactViewProps) => {
     return (
-        <PageLayout particleCount={800} containerClassName="max-w-5xl">
+        <PageLayout showParticles={false} containerClassName="max-w-5xl">
             {/* Header */}
             <div className="pointer-events-auto">
                 <PageHeader
@@ -32,53 +42,76 @@ export const ContactView = ({ socialLinks }: ContactViewProps) => {
 
             {/* Social Links Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pointer-events-auto">
-                {socialLinks.map((social) => {
+                {socialLinks.map((social, index) => {
                     const IconComponent = iconMap[social.iconName] || iconMap['GitHubIcon'];
+                    const iconColor = iconColorMap[social.iconName] || "#2563EB"; // Default blue
+                    const delay = Math.min(index * 100, 500) as 0 | 100 | 200 | 300 | 400 | 500;
 
                     return (
-                        <GlowCard
-                            key={social.id}
-                            glowColor="blue"
-                            glowPosition="center"
-                            glowSize="sm"
-                            className="hover:border-gray-500 transition-all duration-300 cursor-pointer group"
-                            animate={false}
-                        >
-                            <Link
-                                href={social.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block p-6"
+                        <Animated key={social.id} className="h-full" delay={delay}>
+                            <GlowCard
+                                glowColor="primary"
+                                glowPosition="center"
+                                glowSize="sm"
+                                className="hover:scale-[1.02] transition-all duration-300 cursor-pointer group h-full"
+                                animate={true}
                             >
-                                <div className="flex items-start gap-4">
-                                    {/* Icon */}
-                                    <div className="p-3 rounded-xl bg-gray-800 border border-gray-600 group-hover:bg-gray-700 group-hover:scale-110 transition-all duration-300 shadow-sm relative overflow-hidden">
-                                        <IconComponent className="relative z-10" />
-                                    </div>
+                                <Link
+                                    href={social.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block p-6 h-full"
+                                >
+                                    <div className="flex items-start gap-4 h-full">
+                                        {/* Icon */}
+                                        <div
+                                            className="p-3 rounded-xl group-hover:scale-110 transition-all duration-300 relative overflow-hidden"
+                                            style={{
+                                                backgroundColor: 'var(--theme-bg-secondary)',
+                                                borderColor: 'var(--theme-card-border)'
+                                            }}
+                                        >
+                                            <IconComponent
+                                                className="relative z-10 w-10 h-10"
+                                            />
+                                        </div>
 
-                                    {/* Content */}
-                                    <div className="flex-1">
-                                        <h3 className="font-semibold text-lg text-white group-hover:text-blue-400 transition-colors">
-                                            {social.name}
-                                        </h3>
-                                        <p className="text-gray-400 text-sm font-medium">
-                                            {social.username}
-                                        </p>
-                                        {social.description && (
-                                            <p className="text-gray-400 text-sm mt-2 leading-relaxed">
-                                                {social.description}
+                                        {/* Content */}
+                                        <div className="flex-1">
+                                            <h3
+                                                className="font-semibold text-lg transition-colors"
+                                                style={{ color: 'var(--theme-text-heading)' }}
+                                            >
+                                                {social.name}
+                                            </h3>
+                                            <p
+                                                className="text-sm font-medium"
+                                                style={{ color: 'var(--theme-text-muted)' }}
+                                            >
+                                                {social.username}
                                             </p>
-                                        )}
+                                            {social.description && (
+                                                <p
+                                                    className="text-sm mt-2 leading-relaxed"
+                                                    style={{ color: 'var(--theme-text-body)' }}
+                                                >
+                                                    {social.description}
+                                                </p>
+                                            )}
 
-                                        {/* Visit Button */}
-                                        <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white hover:text-gray-300 transition-colors group/link">
-                                            Visit Profile
-                                            <ArrowIcon className="transform group-hover/link:translate-x-1 transition-transform" />
+                                            {/* Visit Button */}
+                                            <div
+                                                className="mt-4 inline-flex items-center gap-2 text-sm font-medium transition-colors group/link"
+                                                style={{ color: 'var(--theme-primary)' }}
+                                            >
+                                                Visit Profile
+                                                <ArrowIcon className="transform group-hover/link:translate-x-1 transition-transform" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </Link>
-                        </GlowCard>
+                                </Link>
+                            </GlowCard>
+                        </Animated>
                     );
                 })}
             </div>

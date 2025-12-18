@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
 
 // GET - Get all items (optional: filter by categoryId)
@@ -41,6 +42,10 @@ export async function POST(request: Request) {
                 categoryId,
             },
         });
+
+        // Revalidate toolbox page
+        revalidatePath('/');
+        revalidatePath('/toolbox');
 
         return NextResponse.json(item, { status: 201 });
     } catch (error) {

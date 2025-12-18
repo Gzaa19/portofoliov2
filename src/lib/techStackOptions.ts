@@ -43,7 +43,7 @@ export const techStackOptions = [
     { name: "Docker", slug: "docker", icon: "SiDocker", color: "#2496ED" },
     { name: "Kubernetes", slug: "kubernetes", icon: "SiKubernetes", color: "#326CE5" },
     { name: "Git", slug: "git", icon: "SiGit", color: "#F05032" },
-    { name: "GitHub", slug: "github", icon: "SiGithub", color: "#FFFFFF" },
+    { name: "GitHub", slug: "github", icon: "SiGithub", color: "#181717" },
     { name: "GitLab", slug: "gitlab", icon: "SiGitlab", color: "#FC6D26" },
     { name: "Vercel", slug: "vercel", icon: "SiVercel", color: "#FFFFFF" },
     { name: "Netlify", slug: "netlify", icon: "SiNetlify", color: "#00C7B7" },
@@ -57,6 +57,7 @@ export const techStackOptions = [
     // Mobile
     { name: "React Native", slug: "reactnative", icon: "SiReact", color: "#61DAFB" },
     { name: "Flutter", slug: "flutter", icon: "SiFlutter", color: "#02569B" },
+    { name: "Dart", slug: "dart", icon: "SiDart", color: "#0175C2" },
     { name: "Swift", slug: "swift", icon: "SiSwift", color: "#FA7343" },
     { name: "Kotlin", slug: "kotlin", icon: "SiKotlin", color: "#7F52FF" },
 ];

@@ -1,7 +1,7 @@
 // ==========================================
 // Actions Index - Export semua actions
 // ==========================================
-
+'use server';
 // Projects
 export {
     projectsReducer,

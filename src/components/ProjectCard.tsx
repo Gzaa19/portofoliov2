@@ -4,6 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui";
+import { THEME_COLORS } from "@/lib/theme";
 
 interface ProjectCardProps {
     title: string;
@@ -17,6 +18,7 @@ interface ProjectCardProps {
 
 /**
  * Project Card - Displays project information with hover effects
+ * Uses theme from globals.css via CSS variables
  */
 export function ProjectCard({
     title,
@@ -30,13 +32,19 @@ export function ProjectCard({
     return (
         <div
             className={cn(
-                "group relative h-full flex flex-col rounded-3xl bg-black border border-gray-800 overflow-hidden shadow-lg cq-container",
+                "group relative h-full flex flex-col rounded-3xl overflow-hidden cq-container",
                 "hover:shadow-xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up",
                 className
             )}
+            style={{
+                background: 'var(--theme-card-bg)',
+                border: '1px solid var(--theme-card-border)',
+            }}
         >
             {/* Animated Border on Hover */}
-            <div className="absolute inset-0 rounded-3xl border border-gray-800 group-hover:border-blue-400/50 transition-colors duration-500" />
+            <div
+                className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-blue-400/50 transition-colors duration-500"
+            />
 
             {/* Project Image */}
             {image && (
@@ -53,22 +61,40 @@ export function ProjectCard({
 
             {/* Placeholder for projects without image */}
             {!image && (
-                <div className="relative h-48 md:h-56 overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                <div
+                    className="relative h-48 md:h-56 overflow-hidden flex items-center justify-center"
+                    style={{ background: 'var(--theme-bg-secondary)' }}
+                >
                     <div className="text-6xl opacity-30 animate-float">🚀</div>
                 </div>
             )}
 
             {/* Content */}
             <div className="relative z-10 p-6 grow flex flex-col">
-                <h3 className="text-xl md:text-2xl font-serif font-bold text-white mb-2">{title}</h3>
-                <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-4 line-clamp-3 grow">
+                <h3
+                    className="text-xl md:text-2xl font-serif font-bold mb-2"
+                    style={{ color: 'var(--theme-text-heading)' }}
+                >
+                    {title}
+                </h3>
+                <p
+                    className="text-sm md:text-base leading-relaxed mb-4 line-clamp-3 grow"
+                    style={{ color: 'var(--theme-text-body)' }}
+                >
                     {description}
                 </p>
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-3 pt-2 mt-auto">
                     {detailLink && (
-                        <Button size="sm" className="bg-white text-black hover:bg-gray-200" asChild>
+                        <Button
+                            size="sm"
+                            asChild
+                            style={{
+                                backgroundColor: THEME_COLORS.primaryHex,
+                                color: '#FFFFFF',
+                            }}
+                        >
                             <Link href={detailLink}>
                                 View Project
                                 <svg
@@ -94,3 +120,4 @@ export function ProjectCard({
 }
 
 export default ProjectCard;
+

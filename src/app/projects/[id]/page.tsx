@@ -8,7 +8,7 @@ import {
     ProjectLinksCard,
 } from "@/components/projects";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 interface Props {
     params: Promise<{

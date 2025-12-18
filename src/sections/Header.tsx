@@ -12,6 +12,7 @@ const navItems = [
 
 /**
  * Header section - wraps the PillNav component
+ * PillNav now uses theme colors from theme.ts by default
  */
 export function Header() {
     const pathname = usePathname();
@@ -31,12 +32,6 @@ export function Header() {
                 <PillNav
                     items={navItems}
                     activeHref={pathname}
-                    // Styling: White Container, Black Pills
-                    baseColor="#ffffff"
-                    pillColor="#000000"
-                    pillTextColor="#ffffff"
-                    hoveredPillTextColor="#000000"
-                    className="p-1 border border-gray-200 rounded-full bg-white/80 backdrop-blur-lg shadow-sm"
                 />
             </div>
         </>

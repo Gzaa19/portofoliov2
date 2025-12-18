@@ -1,6 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
+import {
+    getHeroSettingsAction,
+    updateHeroSettingsAction,
+    type HeroFormData,
+} from "@/lib/serverActions";
 
 interface HeroSettings {
     id: string;
@@ -18,8 +23,8 @@ const STATUS_OPTIONS = [
 export function HeroManager() {
     const [settings, setSettings] = useState<HeroSettings | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
-    const [formData, setFormData] = useState({
+    const [isPending, startTransition] = useTransition();
+    const [formData, setFormData] = useState<HeroFormData>({
         name: "",
         role: "",
         status: "available",
@@ -28,14 +33,15 @@ export function HeroManager() {
     const fetchSettings = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch("/api/hero");
-            const data = await res.json();
-            setSettings(data);
-            setFormData({
-                name: data.name || "",
-                role: data.role || "",
-                status: data.status || "available",
-            });
+            const result = await getHeroSettingsAction();
+            if (result.success && result.data) {
+                setSettings(result.data);
+                setFormData({
+                    name: result.data.name || "",
+                    role: result.data.role || "",
+                    status: (result.data.status as HeroFormData["status"]) || "available",
+                });
+            }
         } catch (error) {
             console.error("Failed to fetch hero settings:", error);
         } finally {
@@ -49,24 +55,17 @@ export function HeroManager() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSaving(true);
 
-        try {
-            const res = await fetch("/api/hero", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                setSettings(data);
+        startTransition(async () => {
+            try {
+                const result = await updateHeroSettingsAction(formData);
+                if (result.success && result.data) {
+                    setSettings(result.data);
+                }
+            } catch (error) {
+                console.error("Failed to save hero settings:", error);
             }
-        } catch (error) {
-            console.error("Failed to save hero settings:", error);
-        } finally {
-            setIsSaving(false);
-        }
+        });
     };
 
     const getStatusBadge = (status: string) => {
@@ -76,8 +75,8 @@ export function HeroManager() {
 
     if (isLoading) {
         return (
-            <div className="bg-gray-800/50 backdrop-blur-md border border-white/10 rounded-2xl p-8">
-                <div className="text-center text-white/50">Loading...</div>
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+                <div className="text-center text-gray-500">Loading...</div>
             </div>
         );
     }
@@ -86,40 +85,40 @@ export function HeroManager() {
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Hero Settings</h1>
-                <p className="text-white/50">Kelola tampilan Hero section</p>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Hero Settings</h1>
+                <p className="text-gray-500">Kelola tampilan Hero section</p>
             </div>
 
             {/* Current Status Preview */}
-            <div className="bg-gray-800/50 backdrop-blur-md border border-white/10 rounded-2xl p-6">
-                <h2 className="text-lg font-semibold text-white mb-4">Preview</h2>
-                <div className="bg-gray-900/50 rounded-xl p-6 text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-full mb-4">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Preview</h2>
+                <div className="bg-gray-50 rounded-xl p-6 text-center border border-gray-100">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full mb-4 shadow-sm">
                         <span className={`w-2 h-2 rounded-full ${getStatusBadge(formData.status).color}`} />
-                        <span className="text-sm text-white">
+                        <span className="text-sm text-gray-700">
                             {getStatusBadge(formData.status).label}
                         </span>
                     </div>
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-2xl font-bold text-gray-900">
                         Hello, I'm {formData.name || "..."}
                     </h3>
-                    <p className="text-white/50 mt-2">{formData.role || "..."}</p>
+                    <p className="text-gray-500 mt-2">{formData.role || "..."}</p>
                 </div>
             </div>
 
             {/* Form */}
-            <div className="bg-gray-800/50 backdrop-blur-md border border-white/10 rounded-2xl p-6">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Name */}
                     <div>
-                        <label className="block text-sm font-medium text-white/70 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Display Name
                         </label>
                         <input
                             type="text"
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-4 py-3 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                             placeholder="e.g., Gzaaa"
                             required
                         />
@@ -127,14 +126,14 @@ export function HeroManager() {
 
                     {/* Role */}
                     <div>
-                        <label className="block text-sm font-medium text-white/70 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Role / Title
                         </label>
                         <input
                             type="text"
                             value={formData.role}
                             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                            className="w-full px-4 py-3 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                             placeholder="e.g., Full Stack Developer"
                             required
                         />
@@ -142,7 +141,7 @@ export function HeroManager() {
 
                     {/* Status */}
                     <div>
-                        <label className="block text-sm font-medium text-white/70 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Availability Status
                         </label>
                         <div className="grid grid-cols-3 gap-4">
@@ -150,16 +149,16 @@ export function HeroManager() {
                                 <button
                                     key={option.value}
                                     type="button"
-                                    onClick={() => setFormData({ ...formData, status: option.value })}
+                                    onClick={() => setFormData({ ...formData, status: option.value as HeroFormData["status"] })}
                                     className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-all ${formData.status === option.value
-                                            ? "bg-emerald-500/20 border-2 border-emerald-500/50"
-                                            : "bg-gray-900/50 border border-white/10 hover:bg-gray-800"
+                                        ? "bg-blue-50 border-2 border-blue-500"
+                                        : "bg-gray-50 border border-gray-200 hover:bg-gray-100"
                                         }`}
                                 >
                                     <span className={`w-3 h-3 rounded-full ${option.color}`} />
                                     <span className={`text-sm ${formData.status === option.value
-                                            ? "text-emerald-300"
-                                            : "text-white/70"
+                                        ? "text-blue-600 font-medium"
+                                        : "text-gray-600"
                                         }`}>
                                         {option.label}
                                     </span>
@@ -172,10 +171,10 @@ export function HeroManager() {
                     <div className="pt-4">
                         <button
                             type="submit"
-                            disabled={isSaving}
-                            className="w-full px-6 py-3 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all disabled:opacity-50"
+                            disabled={isPending}
+                            className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/25"
                         >
-                            {isSaving ? "Saving..." : "Save Changes"}
+                            {isPending ? "Saving..." : "Save Changes"}
                         </button>
                     </div>
                 </form>

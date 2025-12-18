@@ -7,6 +7,8 @@ import { CodeIcon } from "@/components/icons";
 interface Tag {
     id: string;
     name: string;
+    iconName?: string | null;
+    color?: string | null;
 }
 
 interface TechStackCardProps {
@@ -20,24 +22,30 @@ interface TechStackCardProps {
 export function TechStackCard({ tags, className }: TechStackCardProps) {
     return (
         <GlowCard
-            glowColor="purple"
+            glowColor="primary"
             glowPosition="bottom-left"
             glowSize="sm"
             className={className}
         >
             <div className="p-6">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <CodeIcon className="w-5 h-5 text-purple-400" />
+                <h3
+                    className="text-lg font-semibold mb-4 flex items-center gap-2"
+                    style={{ color: 'var(--theme-text-heading)' }}
+                >
+                    <CodeIcon className="w-5 h-5 text-blue-600" />
                     Tech Stack
                 </h3>
                 <div className="flex flex-wrap gap-3">
                     {tags.map((tag) => (
-                        <div
+                        <TechStackIcon
                             key={tag.id}
-                            className="p-2 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105"
-                        >
-                            <TechStackIcon name={tag.name} size="sm" showLabel={false} />
-                        </div>
+                            name={tag.name}
+                            iconName={tag.iconName || undefined}
+                            iconColor={tag.color || undefined}
+                            size="sm"
+                            showLabel={false}
+                            showBackground={false}
+                        />
                     ))}
                 </div>
             </div>

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
 
 interface Params {
@@ -40,6 +41,10 @@ export async function PUT(request: Request, { params }: Params) {
             data: body,
         });
 
+        // Revalidate toolbox page
+        revalidatePath('/');
+        revalidatePath('/toolbox');
+
         return NextResponse.json(category);
     } catch (error) {
         console.error("Failed to update category:", error);
@@ -52,6 +57,11 @@ export async function DELETE(request: Request, { params }: Params) {
     try {
         const { id } = await params;
         await prisma.toolboxCategory.delete({ where: { id } });
+
+        // Revalidate toolbox page
+        revalidatePath('/');
+        revalidatePath('/toolbox');
+
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Failed to delete category:", error);

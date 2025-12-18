@@ -11,7 +11,8 @@ import {
     MdChevronLeft,
     MdChevronRight,
     MdBuildCircle,
-    MdPerson
+    MdPerson,
+    MdStar
 } from "react-icons/md";
 import { IconType } from "react-icons";
 
@@ -26,6 +27,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+    { name: "Hero", href: "/admin/hero", icon: MdStar },
     { name: "About", href: "/admin/about", icon: MdPerson },
     { name: "Projects", href: "/admin/projects", icon: MdFolder },
     { name: "Toolbox", href: "/admin/toolbox", icon: MdBuildCircle },
@@ -71,8 +73,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     // Show nothing while checking auth
     if (isAuthenticated === null && pathname !== "/admin") {
         return (
-            <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-                <div className="text-white">Loading...</div>
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="text-gray-600">Loading...</div>
             </div>
         );
     }
@@ -83,27 +85,27 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     }
 
     return (
-        <div className="min-h-screen bg-gray-900 flex">
-            {/* Sidebar */}
+        <div className="h-screen bg-[#F8FAFC] flex overflow-hidden">
+            {/* Sidebar - Light Theme */}
             <aside
                 className={`${isSidebarOpen ? "w-64" : "w-20"
-                    } bg-gray-800/50 backdrop-blur-md border-r border-white/10 transition-all duration-300 flex flex-col`}
+                    } bg-white border-r border-gray-200 transition-all duration-300 flex flex-col shrink-0 h-full shadow-sm`}
             >
                 {/* Sidebar Header */}
-                <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                     {isSidebarOpen && (
-                        <h1 className="text-xl font-bold text-white">Admin</h1>
+                        <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
                     )}
                     <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                        className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                     >
                         {isSidebarOpen ? <MdChevronLeft size={20} /> : <MdChevronRight size={20} />}
                     </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 p-4 space-y-2">
+                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href;
                         const Icon = item.icon;
@@ -112,31 +114,31 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                                    : "text-white/70 hover:text-white hover:bg-white/10"
+                                    ? "bg-blue-50 text-blue-600 border border-blue-200"
+                                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                                     }`}
                             >
                                 <Icon size={20} />
-                                {isSidebarOpen && <span>{item.name}</span>}
+                                {isSidebarOpen && <span className="font-medium">{item.name}</span>}
                             </Link>
                         );
                     })}
                 </nav>
 
                 {/* Logout Button */}
-                <div className="p-4 border-t border-white/10">
+                <div className="p-4 border-t border-gray-200 shrink-0">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 w-full text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 w-full text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                     >
                         <MdLogout size={20} />
-                        {isSidebarOpen && <span>Logout</span>}
+                        {isSidebarOpen && <span className="font-medium">Logout</span>}
                     </button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-8 overflow-auto">{children}</main>
+            <main className="flex-1 p-8 overflow-y-auto h-full bg-[#F8FAFC]">{children}</main>
         </div>
     );
 }

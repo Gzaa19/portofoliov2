@@ -1,7 +1,7 @@
 // ==========================================
 // Location Actions - State management untuk Location
 // ==========================================
-
+'use server';
 import type { Location } from "@/types/types";
 
 export interface LocationState {

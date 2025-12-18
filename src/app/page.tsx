@@ -2,7 +2,7 @@ import { Hero } from "@/sections/Hero";
 import { FeaturedProjects } from "@/sections/FeaturedProjects";
 import { getHeroSettings, getFeaturedProjects } from "@/data";
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 60;
 
 export default async function Home() {
   const [heroSettings, featuredProjects] = await Promise.all([

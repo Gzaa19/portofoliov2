@@ -1,25 +1,30 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
-export async function GET() {
+export interface ProfileFormData {
+    description: string;
+    photoUrl?: string;
+    resumeUrl?: string;
+}
+
+export async function getProfileAction() {
     try {
         const profile = await prisma.profile.findFirst({
             where: { isActive: true },
         });
-        return NextResponse.json(profile || {});
+        return { success: true, data: profile };
     } catch (error) {
-        console.error("Error fetching profile:", error);
-        return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });
+        console.error("Failed to fetch profile:", error);
+        return { success: false, error: "Failed to fetch profile" };
     }
 }
 
-export async function PUT(request: Request) {
+export async function updateProfileAction(formData: ProfileFormData) {
     try {
-        const body = await request.json();
-        const { description, photoUrl, resumeUrl } = body;
+        const { description, photoUrl, resumeUrl } = formData;
 
-        // Check if a profile exists
         const existingProfile = await prisma.profile.findFirst({
             where: { isActive: true },
         });
@@ -27,7 +32,6 @@ export async function PUT(request: Request) {
         let profile;
 
         if (existingProfile) {
-            // Update existing
             profile = await prisma.profile.update({
                 where: { id: existingProfile.id },
                 data: {
@@ -37,24 +41,23 @@ export async function PUT(request: Request) {
                 },
             });
         } else {
-            // Create new
             profile = await prisma.profile.create({
                 data: {
                     description,
-                    photoUrl,
-                    resumeUrl,
+                    photoUrl: photoUrl ?? "",
+                    resumeUrl: resumeUrl ?? "",
                     isActive: true,
                 },
             });
         }
 
         // Revalidate pages that display about/profile info
-        revalidatePath('/');
-        revalidatePath('/about');
+        revalidatePath("/");
+        revalidatePath("/about");
 
-        return NextResponse.json(profile);
+        return { success: true, data: profile };
     } catch (error) {
-        console.error("Error updating profile:", error);
-        return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
+        console.error("Failed to update profile:", error);
+        return { success: false, error: "Failed to update profile" };
     }
 }

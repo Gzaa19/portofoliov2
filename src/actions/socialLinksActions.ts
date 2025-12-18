@@ -1,7 +1,7 @@
 // ==========================================
 // Social Links Actions - State management untuk Social Links
 // ==========================================
-
+'use server';
 import type { SocialLink } from "@/types/types";
 
 export interface SocialLinksState {

@@ -4,6 +4,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
+import Image from "next/image";
+import IconAI from "@/assets/images/Icon AI.png";
 
 interface Message {
     id: string;
@@ -55,7 +57,7 @@ export function ChatBot() {
             setMessages([{
                 id: "welcome",
                 role: "assistant",
-                content: "Hi, I'm **Gzaaa's** AI assistant. How can I help you?",
+                content: "Hi, I'm **Gaza Al Ghozali Chansa** AI assistant. How can I help you?",
                 timestamp: new Date()
             }]);
             setShowSuggestions(true);
@@ -140,10 +142,11 @@ export function ChatBot() {
 
     return (
         <>
-            {/* Chat Toggle Button - Black & White Theme */}
+            {/* Chat Toggle Button - Light Teal Theme */}
             <motion.button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gray-900 shadow-lg hover:shadow-xl hover:bg-gray-800 transition-all flex items-center justify-center group border border-gray-700"
+                className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center group border border-gray-200"
+                style={{ backgroundColor: '#F1F5F9' }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 aria-label={isOpen ? "Close chat" : "Open chat"}
@@ -155,7 +158,7 @@ export function ChatBot() {
                             initial={{ rotate: -90, opacity: 0 }}
                             animate={{ rotate: 0, opacity: 1 }}
                             exit={{ rotate: 90, opacity: 0 }}
-                            className="w-6 h-6 text-white"
+                            className="w-6 h-6 text-gray-700"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -169,18 +172,18 @@ export function ChatBot() {
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0, opacity: 0 }}
                         >
-                            <GeminiStarIcon size={28} className="text-white" />
+                            <GeminiStarIcon size={28} color="#2563EB" />
                         </motion.div>
                     )}
                 </AnimatePresence>
 
                 {/* Pulse effect when closed */}
                 {!isOpen && (
-                    <span className="absolute inset-0 rounded-full bg-gray-700 animate-ping opacity-20" />
+                    <span className="absolute inset-0 rounded-full bg-blue-200 animate-ping opacity-30" />
                 )}
             </motion.button>
 
-            {/* Chat Window - Dark Theme */}
+            {/* Chat Window - Light Teal Theme */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -192,16 +195,21 @@ export function ChatBot() {
                     >
                         {/* Header */}
                         <div className="chat-header">
-                            <div className="icon-circle">
-                                <GeminiStarIcon size={24} className="text-white" />
+                            <div className="w-9 h-9 relative rounded-full overflow-hidden border border-gray-200">
+                                <Image
+                                    src={IconAI}
+                                    alt="AI Assistant"
+                                    fill
+                                    className="object-cover"
+                                />
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-white font-semibold text-sm">Gzaaa&apos;s AI Assistant</h3>
-                                <p className="text-gray-400 text-xs">Powered by Perplexity AI</p>
+                                <h3 className="text-gray-900 font-semibold text-sm">Jagga</h3>
+                                <p className="text-gray-500 text-xs">Powered by Perplexity AI</p>
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="nav-link p-1 hover:bg-gray-800 rounded-lg"
+                                className="p-1 hover:bg-gray-200 rounded-lg text-gray-500 hover:text-gray-700 transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -210,7 +218,7 @@ export function ChatBot() {
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-950">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
                             {messages.map((message) => (
                                 <motion.div
                                     key={message.id}
@@ -223,12 +231,12 @@ export function ChatBot() {
                                             <ReactMarkdown
                                                 components={{
                                                     p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                                                    strong: ({ children }) => <strong className="font-bold text-white">{children}</strong>,
-                                                    ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 my-2">{children}</ol>,
-                                                    ul: ({ children }) => <ul className="list-disc list-inside space-y-1 my-2">{children}</ul>,
-                                                    li: ({ children }) => <li className="text-gray-200">{children}</li>,
+                                                    strong: ({ children }) => <strong className="font-bold text-gray-900">{children}</strong>,
+                                                    ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 my-2 text-gray-800">{children}</ol>,
+                                                    ul: ({ children }) => <ul className="list-disc list-inside space-y-1 my-2 text-gray-800">{children}</ul>,
+                                                    li: ({ children }) => <li className="text-gray-700">{children}</li>,
                                                     a: ({ href, children }) => (
-                                                        <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                                                        <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">
                                                             {children}
                                                         </a>
                                                     ),
@@ -263,13 +271,13 @@ export function ChatBot() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input Area */}
-                        <div className="border-t border-gray-800 bg-gray-900">
+                        {/* Input Area - Light Theme */}
+                        <div className="border-t border-gray-200 bg-white">
                             {/* Quick Questions */}
                             {showSuggestions && messages.length === 1 && !isLoading && (
                                 <div className="px-4 pt-3 pb-2">
-                                    <p className="text-xs text-gray-500 mb-2">Quick questions:</p>
-                                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                                    <p className="text-xs text-gray-500 mb-2 font-medium">Quick questions:</p>
+                                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
                                         {SUGGESTED_QUESTIONS.map((q, index) => (
                                             <button
                                                 key={index}

@@ -13,6 +13,54 @@
 }
 
 :root {
+  /* ===========================================
+   * THEME: Clean SaaS Look (Corporate Modern)
+   * 
+   * To change theme, modify these values:
+   * - Deep Sea: bg #0284C7, primary #7DD3FC
+   * - Midnight: bg #0F172A, primary #8B5CF6
+   * - Clean SaaS: bg #FFFFFF, primary #2563EB
+   * =========================================== */
+
+  /* === MAIN THEME COLORS === */
+  --theme-bg: #FFFFFF;
+  --theme-bg-secondary: #F1F5F9;
+  --theme-bg-tertiary: #E2E8F0;
+
+  --theme-primary: #2563EB;
+  --theme-primary-light: #3B82F6;
+  --theme-primary-dark: #1D4ED8;
+
+  --theme-text-heading: #1E293B;
+  --theme-text-body: #475569;
+  --theme-text-muted: #94A3B8;
+
+  /* === GRADIENT COLORS (for animated text) === */
+  --theme-gradient-1: #2563EB;
+  --theme-gradient-2: #3B82F6;
+  --theme-gradient-3: #60A5FA;
+  --theme-gradient-4: #3B82F6;
+  --theme-gradient-5: #2563EB;
+
+  /* === CARD THEME === */
+  --theme-card-bg: linear-gradient(135deg, var(--theme-bg-secondary) 0%, var(--theme-bg) 100%);
+  --theme-card-border: rgba(0, 0, 0, 0.08);
+  --theme-card-text: var(--theme-text-heading);
+  --theme-card-text-secondary: var(--theme-text-body);
+
+  /* === GLOW / ACCENT === */
+  --theme-glow-color: rgba(37, 99, 235, 0.15);
+  --theme-accent-glow: rgba(37, 99, 235, 0.3);
+
+  /* === BUTTON THEME === */
+  --theme-btn-primary-bg: var(--theme-primary);
+  --theme-btn-primary-text: #FFFFFF;
+  --theme-btn-primary-hover: var(--theme-primary-dark);
+  --theme-btn-outline-border: var(--theme-primary);
+  --theme-btn-outline-text: var(--theme-primary);
+  --theme-btn-outline-hover-bg: var(--theme-primary);
+  --theme-btn-outline-hover-text: #FFFFFF;
+
   /* Background Colors - Light Theme */
   --background-secondary: #fafafa;
   --background-dark: #0f0f0f;
@@ -38,9 +86,11 @@
   --text-secondary: #5f6368;
   --text-muted: #9aa0a6;
 
-  /* Hero Ring Colors - Light Theme */
-  --ring-color: rgba(66, 133, 244, 0.15);
-  --ring-shadow: rgba(66, 133, 244, 0.08);
+  /* Hero Ring Colors - Royal Blue Theme (matching gradient text) */
+  --ring-color: rgba(37, 99, 235, 0.2);
+  /* #2563EB with opacity */
+  --ring-shadow: rgba(59, 130, 246, 0.12);
+  /* #3B82F6 with opacity */
 
   /* Card Colors - Light Theme */
   --card-bg: rgba(0, 0, 0, 0.02);
@@ -559,47 +609,55 @@
     animation: gradientShift 3s ease infinite;
   }
 
-  /* === CHATBOT COMPONENT STYLES === */
+  /* === CHATBOT COMPONENT STYLES - LIGHT TEAL THEME === */
 
   /* Chat Window Container */
   .chat-window {
     @apply fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-48px)] h-[550px] max-h-[calc(100vh-150px)];
-    @apply bg-gray-950 rounded-2xl shadow-2xl border border-gray-800 flex flex-col overflow-hidden;
+    @apply bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden;
   }
 
   /* Chat Header */
   .chat-header {
-    @apply bg-gray-900 px-5 py-4 flex items-center gap-3 border-b border-gray-800;
+    @apply px-5 py-4 flex items-center gap-3 border-b border-gray-200;
+    background-color: #F1F5F9;
+    /* Light Teal */
   }
 
   /* Chat Message Bubble - User */
   .chat-bubble-user {
     @apply max-w-[85%] px-4 py-3 rounded-2xl rounded-br-md text-sm leading-relaxed;
-    @apply bg-white text-gray-900;
+    @apply bg-blue-600 text-white;
   }
 
   /* Chat Message Bubble - Assistant */
   .chat-bubble-assistant {
     @apply max-w-[85%] px-4 py-3 rounded-2xl rounded-bl-md text-sm leading-relaxed;
-    @apply bg-gray-800 text-gray-100 border border-gray-700;
+    background-color: #F1F5F9;
+    /* Light Teal */
+    @apply text-gray-800 border border-gray-200;
   }
 
   /* Chat Input */
   .chat-input {
-    @apply flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-sm text-white;
-    @apply placeholder-gray-500 focus:outline-none focus:border-gray-600 focus:ring-1 focus:ring-gray-600 transition-all;
+    @apply flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900;
+    background-color: #F1F5F9;
+    /* Light Teal */
+    @apply placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all;
   }
 
   /* Chat Send Button */
   .chat-send-btn {
-    @apply w-10 h-10 rounded-xl bg-white text-gray-900 flex items-center justify-center;
-    @apply disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-100 transition-all;
+    @apply w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center;
+    @apply disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-700 transition-all;
   }
 
   /* Quick Question Button (Pill Style) */
   .quick-btn {
-    @apply px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-full text-xs text-gray-300;
-    @apply hover:bg-gray-700 hover:border-gray-500 hover:text-white transition-all;
+    @apply px-3 py-1.5 border border-gray-200 rounded-full text-xs text-gray-600;
+    background-color: #F1F5F9;
+    /* Light Teal */
+    @apply hover:bg-gray-100 hover:border-gray-300 hover:text-gray-900 transition-all;
     @apply flex items-center gap-1.5 shrink-0;
   }
 
@@ -734,6 +792,25 @@
 
   .animate-slide-down {
     animation: slideDown 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
+
+  /* Utility for simple blur-in animation */
+  .animate-blur-in {
+    animation: blurIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  @keyframes blurIn {
+    0% {
+      opacity: 0;
+      filter: blur(10px);
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
   }
 
   .animate-nav-pill {

@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { techStackOptions } from "@/lib/techStackOptions";
 import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
-import { MdSearch, MdClose } from "react-icons/md";
+import { MdSearch, MdClose, MdStar, MdStarOutline } from "react-icons/md";
 import type { Project } from "@/types/types";
 
 interface ProjectsManagerProps {
@@ -19,7 +19,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProject, setEditingProject] = useState<Project | null>(null);
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    const [selectedTags, setSelectedTags] = useState<{ name: string; iconName?: string; color?: string }[]>([]);
     const [formData, setFormData] = useState({
         slug: "",
         title: "",
@@ -37,10 +37,14 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         setIsLoading(true);
         try {
             const res = await fetch("/api/projects", { cache: 'no-store' });
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
             const data = await res.json();
             setProjects(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to fetch projects:", error);
+            setProjects([]);
         } finally {
             setIsLoading(false);
         }
@@ -81,7 +85,15 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
 
     const openEditModal = (project: Project) => {
         setEditingProject(project);
-        setSelectedTags(project.tags.map((t) => t.name));
+        // Map tags with proper iconName - prioritize from database, then techStackOptions
+        setSelectedTags(project.tags.map((t) => {
+            const tech = techStackOptions.find(opt => opt.name.toLowerCase() === t.name.toLowerCase());
+            return {
+                name: t.name,
+                iconName: t.iconName || tech?.icon || undefined,
+                color: t.color || tech?.color || undefined
+            };
+        }));
         setFormData({
             slug: project.slug,
             title: project.title,
@@ -97,12 +109,15 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         setIsModalOpen(true);
     };
 
-    const toggleTag = (tagName: string) => {
-        setSelectedTags((prev) =>
-            prev.includes(tagName)
-                ? prev.filter((t) => t !== tagName)
-                : [...prev, tagName]
-        );
+    const toggleTag = (tagName: string, iconName?: string, color?: string) => {
+        setSelectedTags((prev) => {
+            const exists = prev.find((t) => t.name === tagName);
+            if (exists) {
+                return prev.filter((t) => t.name !== tagName);
+            } else {
+                return [...prev, { name: tagName, iconName, color }];
+            }
+        });
     };
 
     const addSearchedIcon = (iconName: string) => {
@@ -117,8 +132,12 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
     };
 
     const addCustomTech = () => {
-        if (customTechForm.name.trim() && !selectedTags.includes(customTechForm.name.trim())) {
-            setSelectedTags([...selectedTags, customTechForm.name.trim()]);
+        if (customTechForm.name.trim() && !selectedTags.find((t) => t.name === customTechForm.name.trim())) {
+            setSelectedTags([...selectedTags, {
+                name: customTechForm.name.trim(),
+                iconName: customTechForm.iconName || undefined,
+                color: customTechForm.color || "#888888"
+            }]);
             setCustomTechForm({ name: "", iconName: "", color: "#888888" });
         }
     };
@@ -128,7 +147,11 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
 
         const payload = {
             ...formData,
-            tags: selectedTags,
+            tags: selectedTags.map((t) => ({
+                name: t.name,
+                iconName: t.iconName,
+                color: t.color
+            })),
             newSlug: editingProject && formData.slug !== editingProject.slug ? formData.slug : undefined,
         };
 
@@ -172,16 +195,21 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         );
     };
 
-    // Get icon for a tag name (either from predefined or searched)
-    const getTagIcon = (tagName: string) => {
-        const tech = getTechStackOption(tagName);
+    // Get icon for a tag (either from predefined options or custom tag data)
+    const getTagIcon = (tag: { name: string; iconName?: string; color?: string }) => {
+        // First check if it's a predefined tech stack option
+        const tech = getTechStackOption(tag.name);
         if (tech) {
-            return { IconComp: getIcon(tech.icon), color: tech.color };
+            return { IconComp: getIcon(tech.icon), color: tag.color || tech.color };
         }
-        // Try to find a matching Si icon
-        const iconName = `Si${tagName.replace(/\s+/g, '')}`;
+        // Use custom iconName if provided
+        if (tag.iconName) {
+            return { IconComp: getIcon(tag.iconName), color: tag.color || "#888888" };
+        }
+        // Try to find a matching Si icon based on name
+        const iconName = `Si${tag.name.replace(/\s+/g, '')}`;
         const IconComp = getIcon(iconName);
-        return { IconComp, color: "#888888" };
+        return { IconComp, color: tag.color || "#888888" };
     };
 
     return (
@@ -189,50 +217,50 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Projects</h1>
-                    <p className="text-white/50">Kelola daftar project</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Projects</h1>
+                    <p className="text-gray-500">Kelola daftar project</p>
                 </div>
                 <button
                     onClick={openCreateModal}
-                    className="px-4 py-2 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all"
+                    className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25"
                 >
                     + Add Project
                 </button>
             </div>
 
             {/* Table */}
-            <div className="bg-gray-800/50 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden">
+            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
                 {isLoading ? (
-                    <div className="p-8 text-center text-white/50">Loading...</div>
+                    <div className="p-8 text-center text-gray-500">Loading...</div>
                 ) : projects.length === 0 ? (
-                    <div className="p-8 text-center text-white/50">Belum ada project</div>
+                    <div className="p-8 text-center text-gray-500">Belum ada project</div>
                 ) : (
                     <table className="w-full">
-                        <thead className="bg-gray-900/50">
+                        <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-white/70">Title</th>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-white/70">Tech Stack</th>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-white/70">Featured</th>
-                                <th className="px-6 py-4 text-right text-sm font-medium text-white/70">Actions</th>
+                                <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Title</th>
+                                <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Tech Stack</th>
+                                <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Featured</th>
+                                <th className="px-6 py-4 text-right text-sm font-medium text-gray-600">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/10">
+                        <tbody className="divide-y divide-gray-100">
                             {projects.map((project) => (
-                                <tr key={project.id} className="hover:bg-white/5 transition-colors">
+                                <tr key={project.id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4">
-                                        <div className="text-white font-medium">{project.title}</div>
-                                        <div className="text-white/50 text-sm truncate max-w-xs">
+                                        <div className="text-gray-900 font-medium">{project.title}</div>
+                                        <div className="text-gray-500 text-sm truncate max-w-xs">
                                             {project.description}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-wrap gap-2">
                                             {project.tags.slice(0, 5).map((tag) => {
-                                                const { IconComp, color } = getTagIcon(tag.name);
+                                                const { IconComp, color } = getTagIcon({ name: tag.name, color: tag.color || undefined });
                                                 return (
                                                     <div
                                                         key={tag.id}
-                                                        className="flex items-center gap-1.5 px-2 py-1 bg-gray-700/50 rounded-lg"
+                                                        className="flex items-center gap-1.5 px-2 py-1 bg-gray-100 rounded-lg"
                                                         title={tag.name}
                                                     >
                                                         {IconComp && (
@@ -241,12 +269,12 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                                                                 style={{ color }}
                                                             />
                                                         )}
-                                                        <span className="text-xs text-white/70">{tag.name}</span>
+                                                        <span className="text-xs text-gray-600">{tag.name}</span>
                                                     </div>
                                                 );
                                             })}
                                             {project.tags.length > 5 && (
-                                                <span className="px-2 py-1 text-xs text-white/50">
+                                                <span className="px-2 py-1 text-xs text-gray-400">
                                                     +{project.tags.length - 5}
                                                 </span>
                                             )}
@@ -254,24 +282,29 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span
-                                            className={`px-2 py-1 text-xs rounded-full ${project.featured
-                                                ? "bg-yellow-500/20 text-yellow-300"
-                                                : "bg-gray-500/20 text-gray-400"
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full ${project.featured
+                                                ? "bg-linear-to-r from-yellow-100 to-amber-100 text-amber-700 border border-yellow-300 shadow-sm"
+                                                : "bg-gray-100 text-gray-500"
                                                 }`}
                                         >
-                                            {project.featured ? "Yes" : "No"}
+                                            {project.featured ? (
+                                                <MdStar className="w-4 h-4 text-yellow-500" />
+                                            ) : (
+                                                <MdStarOutline className="w-4 h-4" />
+                                            )}
+                                            {project.featured ? "Featured" : "No"}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <button
                                             onClick={() => openEditModal(project)}
-                                            className="px-3 py-1 text-sm text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors mr-2"
+                                            className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors mr-2 font-medium"
                                         >
                                             Edit
                                         </button>
                                         <button
                                             onClick={() => handleDelete(project.slug)}
-                                            className="px-3 py-1 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                            className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
                                         >
                                             Delete
                                         </button>
@@ -285,395 +318,399 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
 
             {/* Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-gray-800 border border-white/10 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-                        <div className="p-6 border-b border-white/10">
-                            <h2 className="text-xl font-bold text-white">
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white border border-gray-200 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl">
+                        {/* Fixed Header */}
+                        <div className="p-6 border-b border-gray-200 shrink-0">
+                            <h2 className="text-xl font-bold text-gray-900">
                                 {editingProject ? "Edit Project" : "Add New Project"}
                             </h2>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-white/70 mb-2">Slug</label>
-                                    <input
-                                        type="text"
-                                        value={formData.slug}
-                                        onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                                        className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
-                                        placeholder="project-slug"
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-white/70 mb-2">Title</label>
-                                    <input
-                                        type="text"
-                                        value={formData.title}
-                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
-                                        placeholder="Project Title"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-white/70 mb-2">Description</label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50 h-24 resize-none"
-                                    placeholder="Project description..."
-                                    required
-                                />
-                            </div>
-
-                            {/* Image Upload */}
-                            <div>
-                                <label className="block text-sm font-medium text-white/70 mb-2">Project Image</label>
-                                <div className="space-y-3">
-                                    {/* Image Preview */}
-                                    {formData.image && (
-                                        <div className="relative w-full h-40 rounded-xl overflow-hidden bg-gray-900/50 border border-white/10">
-                                            <img
-                                                src={formData.image}
-                                                alt="Preview"
-                                                className="w-full h-full object-cover"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setFormData({ ...formData, image: "" })}
-                                                className="absolute top-2 right-2 p-1.5 bg-red-500/80 hover:bg-red-500 rounded-lg text-white transition-colors"
-                                            >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {/* Upload Area */}
-                                    {!formData.image && (
-                                        <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-emerald-500/50 transition-colors bg-gray-900/30">
-                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <svg className="w-10 h-10 text-white/30 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
-                                                <p className="text-sm text-white/50">
-                                                    <span className="font-medium text-emerald-400">Click to upload</span> or drag and drop
-                                                </p>
-                                                <p className="text-xs text-white/30 mt-1">PNG, JPG, WEBP (max 5MB)</p>
-                                            </div>
-                                            <input
-                                                type="file"
-                                                className="hidden"
-                                                accept="image/*"
-                                                onChange={async (e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (!file) return;
-
-                                                    if (file.size > 5 * 1024 * 1024) {
-                                                        alert("File size must be less than 5MB");
-                                                        return;
-                                                    }
-
-                                                    const reader = new FileReader();
-                                                    reader.onload = async () => {
-                                                        const base64 = reader.result as string;
-
-                                                        try {
-                                                            const res = await fetch("/api/upload", {
-                                                                method: "POST",
-                                                                headers: { "Content-Type": "application/json" },
-                                                                body: JSON.stringify({ image: base64 }),
-                                                            });
-
-                                                            if (res.ok) {
-                                                                const data = await res.json();
-                                                                setFormData({ ...formData, image: data.url });
-                                                            } else {
-                                                                alert("Failed to upload image");
-                                                            }
-                                                        } catch (error) {
-                                                            console.error("Upload error:", error);
-                                                            alert("Failed to upload image");
-                                                        }
-                                                    };
-                                                    reader.readAsDataURL(file);
-                                                }}
-                                            />
-                                        </label>
-                                    )}
-
-                                    {/* Or enter URL manually */}
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex-1 h-px bg-white/10" />
-                                        <span className="text-xs text-white/30">or enter URL</span>
-                                        <div className="flex-1 h-px bg-white/10" />
-                                    </div>
-                                    <input
-                                        type="url"
-                                        value={formData.image}
-                                        onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                                        className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500/50"
-                                        placeholder="https://example.com/image.png"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-white/70 mb-2">Live Demo URL</label>
-                                    <input
-                                        type="url"
-                                        value={formData.link}
-                                        onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-                                        className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
-                                        placeholder="https://example.com"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-white/70 mb-2">GitHub URL</label>
-                                    <input
-                                        type="url"
-                                        value={formData.github}
-                                        onChange={(e) => setFormData({ ...formData, github: e.target.value })}
-                                        className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
-                                        placeholder="https://github.com/..."
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Tech Stack Multi-Select with Search */}
-                            <div>
-                                <label className="block text-sm font-medium text-white/70 mb-2">
-                                    Tech Stack ({selectedTags.length} selected)
-                                </label>
-
-                                {/* Tab Toggle */}
-                                <div className="flex gap-2 mb-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowIconSearch(false)}
-                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${!showIconSearch ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' : 'bg-gray-900/50 text-white/50 border border-transparent hover:bg-gray-800'}`}
-                                    >
-                                        Quick Select
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowIconSearch(true)}
-                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${showIconSearch ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' : 'bg-gray-900/50 text-white/50 border border-transparent hover:bg-gray-800'}`}
-                                    >
-                                        <MdSearch /> Search All Icons
-                                    </button>
-                                </div>
-
-                                {/* Quick Select */}
-                                {!showIconSearch && (
-                                    <div className="bg-gray-900/50 border border-white/10 rounded-xl p-4 max-h-64 overflow-y-auto">
-                                        <div className="grid grid-cols-4 gap-2">
-                                            {techStackOptions.map((tech) => {
-                                                const IconComp = getIcon(tech.icon);
-                                                const isSelected = selectedTags.includes(tech.name);
-                                                return (
-                                                    <button
-                                                        key={tech.slug}
-                                                        type="button"
-                                                        onClick={() => toggleTag(tech.name)}
-                                                        className={`flex items-center gap-2 p-2 rounded-lg transition-all ${isSelected
-                                                            ? "bg-emerald-500/20 border border-emerald-500/50"
-                                                            : "bg-gray-800/50 border border-transparent hover:bg-gray-700/50"
-                                                            }`}
-                                                    >
-                                                        {IconComp && (
-                                                            <IconComp
-                                                                className="w-5 h-5 shrink-0"
-                                                                style={{ color: tech.color }}
-                                                            />
-                                                        )}
-                                                        <span className={`text-xs truncate ${isSelected ? "text-emerald-300" : "text-white/70"}`}>
-                                                            {tech.name}
-                                                        </span>
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Icon Search */}
-                                {showIconSearch && (
+                        {/* Scrollable Form Content */}
+                        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+                            <div className="p-6 space-y-4 overflow-y-auto flex-1">
+                                <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <div className="relative mb-3">
-                                            <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-lg" />
-                                            <input
-                                                type="text"
-                                                value={iconSearch}
-                                                onChange={(e) => setIconSearch(e.target.value)}
-                                                className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
-                                                placeholder="Type to search... (e.g., 'flutter', 'aws', 'docker')"
-                                            />
-                                            {iconSearch && (
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Slug</label>
+                                        <input
+                                            type="text"
+                                            value={formData.slug}
+                                            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                            placeholder="project-slug"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                                        <input
+                                            type="text"
+                                            value={formData.title}
+                                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                            placeholder="Project Title"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                    <textarea
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 h-24 resize-none"
+                                        placeholder="Project description..."
+                                        required
+                                    />
+                                </div>
+
+                                {/* Image Upload */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Project Image</label>
+                                    <div className="space-y-3">
+                                        {/* Image Preview */}
+                                        {formData.image && (
+                                            <div className="relative w-full h-40 rounded-xl overflow-hidden bg-gray-50 border border-gray-200">
+                                                <img
+                                                    src={formData.image}
+                                                    alt="Preview"
+                                                    className="w-full h-full object-cover"
+                                                />
                                                 <button
                                                     type="button"
-                                                    onClick={() => setIconSearch("")}
-                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                                                    onClick={() => setFormData({ ...formData, image: "" })}
+                                                    className="absolute top-2 right-2 p-1.5 bg-red-500/80 hover:bg-red-500 rounded-lg text-white transition-colors"
                                                 >
-                                                    <MdClose />
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className="bg-gray-900/50 border border-white/10 rounded-xl p-3 min-h-[120px] max-h-48 overflow-y-auto">
-                                            {iconSearch.length === 0 ? (
-                                                <p className="text-white/30 text-sm text-center py-8">Ketik nama icon untuk mencari...</p>
-                                            ) : filteredIcons.length === 0 ? (
-                                                <p className="text-white/30 text-sm text-center py-8">Tidak ditemukan icon &quot;{iconSearch}&quot;</p>
-                                            ) : (
-                                                <div className="grid grid-cols-5 gap-2">
-                                                    {filteredIcons.map((iconName) => {
-                                                        const IconComp = getIcon(iconName);
-                                                        const isSelected = customTechForm.iconName === iconName;
-                                                        return (
-                                                            <button
-                                                                key={iconName}
-                                                                type="button"
-                                                                onClick={() => addSearchedIcon(iconName)}
-                                                                className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-all ${isSelected ? "bg-emerald-500/20 border border-emerald-500/50" : "bg-gray-800/50 border border-transparent hover:bg-gray-700/50"}`}
-                                                            >
-                                                                {IconComp && <IconComp className="w-6 h-6" style={{ color: customTechForm.iconName === iconName ? customTechForm.color : "#888888" }} />}
-                                                                <span className={`text-[10px] truncate w-full text-center ${isSelected ? "text-emerald-300" : "text-white/50"}`}>{iconName.replace('Si', '')}</span>
-                                                            </button>
-                                                        );
-                                                    })}
-                                                </div>
-                                            )}
-                                            {filteredIcons.length === 50 && (
-                                                <p className="text-white/30 text-xs text-center mt-2">Showing first 50 results. Type more to narrow down.</p>
-                                            )}
-                                        </div>
-
-                                        {/* Custom Tech Form */}
-                                        <div className="mt-4 grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-sm font-medium text-white/70 mb-2">Name</label>
-                                                <input
-                                                    type="text"
-                                                    value={customTechForm.name}
-                                                    onChange={(e) => setCustomTechForm({ ...customTechForm, name: e.target.value })}
-                                                    className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
-                                                    placeholder="React"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-white/70 mb-2">Icon Name</label>
-                                                <input
-                                                    type="text"
-                                                    value={customTechForm.iconName}
-                                                    onChange={(e) => setCustomTechForm({ ...customTechForm, iconName: e.target.value })}
-                                                    className="w-full px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white focus:outline-none focus:border-emerald-500/50"
-                                                    placeholder="SiReact"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="mt-4">
-                                            <label className="block text-sm font-medium text-white/70 mb-2">Color</label>
-                                            <div className="flex gap-2">
-                                                <input
-                                                    type="color"
-                                                    value={customTechForm.color}
-                                                    onChange={(e) => setCustomTechForm({ ...customTechForm, color: e.target.value })}
-                                                    className="w-12 h-10 rounded-lg cursor-pointer bg-transparent border-0"
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={customTechForm.color}
-                                                    onChange={(e) => setCustomTechForm({ ...customTechForm, color: e.target.value })}
-                                                    className="flex-1 px-4 py-2 bg-gray-900/50 border border-white/10 rounded-xl text-white font-mono focus:outline-none focus:border-emerald-500/50"
-                                                    placeholder="#61DAFB"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Preview */}
-                                        {customTechForm.iconName && (
-                                            <div className="mt-4 bg-gray-900/50 border border-white/10 rounded-xl p-4 flex items-center justify-between">
-                                                <div className="flex items-center gap-4">
-                                                    <span className="text-white/50 text-sm">Preview:</span>
-                                                    {(() => {
-                                                        const IconComp = getIcon(customTechForm.iconName);
-                                                        return IconComp ? (
-                                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 rounded-lg">
-                                                                <IconComp className="w-5 h-5" style={{ color: customTechForm.color }} />
-                                                                <span className="text-white">{customTechForm.name || "Unnamed"}</span>
-                                                            </div>
-                                                        ) : (
-                                                            <span className="text-red-400 text-sm">Icon not found</span>
-                                                        );
-                                                    })()}
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={addCustomTech}
-                                                    disabled={!customTechForm.name.trim()}
-                                                    className="px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-lg hover:bg-emerald-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                                >
-                                                    + Add
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
                                                 </button>
                                             </div>
                                         )}
-                                    </div>
-                                )}
 
-                                {/* Selected Tags Preview */}
-                                {selectedTags.length > 0 && (
-                                    <div className="mt-3 flex flex-wrap gap-2">
-                                        {selectedTags.map((tagName) => {
-                                            const { IconComp, color } = getTagIcon(tagName);
-                                            return (
-                                                <span
-                                                    key={tagName}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-sm"
-                                                >
-                                                    {IconComp && <IconComp className="w-4 h-4" style={{ color }} />}
-                                                    {tagName}
+                                        {/* Upload Area */}
+                                        {!formData.image && (
+                                            <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-500 transition-colors bg-gray-50">
+                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <svg className="w-10 h-10 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                    <p className="text-sm text-gray-500">
+                                                        <span className="font-medium text-blue-600">Click to upload</span> or drag and drop
+                                                    </p>
+                                                    <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP (max 5MB)</p>
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    className="hidden"
+                                                    accept="image/*"
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (!file) return;
+
+                                                        if (file.size > 5 * 1024 * 1024) {
+                                                            alert("File size must be less than 5MB");
+                                                            return;
+                                                        }
+
+                                                        const reader = new FileReader();
+                                                        reader.onload = async () => {
+                                                            const base64 = reader.result as string;
+
+                                                            try {
+                                                                const res = await fetch("/api/upload", {
+                                                                    method: "POST",
+                                                                    headers: { "Content-Type": "application/json" },
+                                                                    body: JSON.stringify({ image: base64 }),
+                                                                });
+
+                                                                if (res.ok) {
+                                                                    const data = await res.json();
+                                                                    setFormData({ ...formData, image: data.url });
+                                                                } else {
+                                                                    alert("Failed to upload image");
+                                                                }
+                                                            } catch (error) {
+                                                                console.error("Upload error:", error);
+                                                                alert("Failed to upload image");
+                                                            }
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }}
+                                                />
+                                            </label>
+                                        )}
+
+                                        {/* Or enter URL manually */}
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex-1 h-px bg-gray-200" />
+                                            <span className="text-xs text-gray-400">or enter URL</span>
+                                            <div className="flex-1 h-px bg-gray-200" />
+                                        </div>
+                                        <input
+                                            type="url"
+                                            value={formData.image}
+                                            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                                            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                            placeholder="https://example.com/image.png"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Live Demo URL</label>
+                                        <input
+                                            type="url"
+                                            value={formData.link}
+                                            onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                                            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                            placeholder="https://example.com"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">GitHub URL</label>
+                                        <input
+                                            type="url"
+                                            value={formData.github}
+                                            onChange={(e) => setFormData({ ...formData, github: e.target.value })}
+                                            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                            placeholder="https://github.com/..."
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Tech Stack Multi-Select with Search */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Tech Stack ({selectedTags.length} selected)
+                                    </label>
+
+                                    {/* Tab Toggle */}
+                                    <div className="flex gap-2 mb-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowIconSearch(false)}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${!showIconSearch ? 'bg-blue-50 text-blue-600 border border-blue-500' : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'}`}
+                                        >
+                                            Quick Select
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowIconSearch(true)}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${showIconSearch ? 'bg-blue-50 text-blue-600 border border-blue-500' : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'}`}
+                                        >
+                                            <MdSearch /> Search All Icons
+                                        </button>
+                                    </div>
+
+                                    {/* Quick Select */}
+                                    {!showIconSearch && (
+                                        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 max-h-64 overflow-y-auto">
+                                            <div className="grid grid-cols-4 gap-2">
+                                                {techStackOptions.map((tech) => {
+                                                    const IconComp = getIcon(tech.icon);
+                                                    const isSelected = selectedTags.some((t) => t.name === tech.name);
+                                                    return (
+                                                        <button
+                                                            key={tech.slug}
+                                                            type="button"
+                                                            onClick={() => toggleTag(tech.name, tech.icon, tech.color)}
+                                                            className={`flex items-center gap-2 p-2 rounded-lg transition-all ${isSelected
+                                                                ? "bg-blue-50 border border-blue-500"
+                                                                : "bg-white border border-gray-200 hover:bg-gray-100"
+                                                                }`}
+                                                        >
+                                                            {IconComp && (
+                                                                <IconComp
+                                                                    className="w-5 h-5 shrink-0"
+                                                                    style={{ color: tech.color }}
+                                                                />
+                                                            )}
+                                                            <span className={`text-xs truncate ${isSelected ? "text-blue-600 font-medium" : "text-gray-600"}`}>
+                                                                {tech.name}
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Icon Search */}
+                                    {showIconSearch && (
+                                        <div>
+                                            <div className="relative mb-3">
+                                                <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+                                                <input
+                                                    type="text"
+                                                    value={iconSearch}
+                                                    onChange={(e) => setIconSearch(e.target.value)}
+                                                    className="w-full pl-10 pr-10 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                                    placeholder="Type to search... (e.g., 'flutter', 'aws', 'docker')"
+                                                />
+                                                {iconSearch && (
                                                     <button
                                                         type="button"
-                                                        onClick={() => toggleTag(tagName)}
-                                                        className="ml-1 hover:text-red-400"
+                                                        onClick={() => setIconSearch("")}
+                                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                                                     >
-                                                        ×
+                                                        <MdClose />
                                                     </button>
-                                                </span>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
+                                                )}
+                                            </div>
+                                            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 min-h-[120px] max-h-48 overflow-y-auto">
+                                                {iconSearch.length === 0 ? (
+                                                    <p className="text-gray-400 text-sm text-center py-8">Ketik nama icon untuk mencari...</p>
+                                                ) : filteredIcons.length === 0 ? (
+                                                    <p className="text-gray-400 text-sm text-center py-8">Tidak ditemukan icon &quot;{iconSearch}&quot;</p>
+                                                ) : (
+                                                    <div className="grid grid-cols-5 gap-2">
+                                                        {filteredIcons.map((iconName) => {
+                                                            const IconComp = getIcon(iconName);
+                                                            const isSelected = customTechForm.iconName === iconName;
+                                                            return (
+                                                                <button
+                                                                    key={iconName}
+                                                                    type="button"
+                                                                    onClick={() => addSearchedIcon(iconName)}
+                                                                    className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-all ${isSelected ? "bg-blue-50 border border-blue-500" : "bg-white border border-gray-200 hover:bg-gray-100"}`}
+                                                                >
+                                                                    {IconComp && <IconComp className="w-6 h-6" style={{ color: customTechForm.iconName === iconName ? customTechForm.color : "#888888" }} />}
+                                                                    <span className={`text-[10px] truncate w-full text-center ${isSelected ? "text-blue-600 font-medium" : "text-gray-500"}`}>{iconName.replace('Si', '')}</span>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )}
+                                                {filteredIcons.length === 50 && (
+                                                    <p className="text-gray-400 text-xs text-center mt-2">Showing first 50 results. Type more to narrow down.</p>
+                                                )}
+                                            </div>
 
-                            {/* Featured Checkbox */}
-                            <div className="flex items-center gap-3">
-                                <input
-                                    type="checkbox"
-                                    id="featured"
-                                    checked={formData.featured}
-                                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                                    className="w-5 h-5 rounded bg-gray-900/50 border-white/10"
-                                />
-                                <label htmlFor="featured" className="text-white/70">Featured Project</label>
-                            </div>
+                                            {/* Custom Tech Form */}
+                                            <div className="mt-4 grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={customTechForm.name}
+                                                        onChange={(e) => setCustomTechForm({ ...customTechForm, name: e.target.value })}
+                                                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                                        placeholder="React"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Icon Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={customTechForm.iconName}
+                                                        onChange={(e) => setCustomTechForm({ ...customTechForm, iconName: e.target.value })}
+                                                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                                        placeholder="SiReact"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="mt-4">
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="color"
+                                                        value={customTechForm.color}
+                                                        onChange={(e) => setCustomTechForm({ ...customTechForm, color: e.target.value })}
+                                                        className="w-12 h-10 rounded-lg cursor-pointer bg-transparent border-0"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={customTechForm.color}
+                                                        onChange={(e) => setCustomTechForm({ ...customTechForm, color: e.target.value })}
+                                                        className="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-mono focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                                        placeholder="#61DAFB"
+                                                    />
+                                                </div>
+                                            </div>
 
-                            <div className="flex justify-end gap-3 pt-4">
+                                            {/* Preview */}
+                                            {customTechForm.iconName && (
+                                                <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+                                                    <div className="flex items-center gap-4">
+                                                        <span className="text-gray-500 text-sm">Preview:</span>
+                                                        {(() => {
+                                                            const IconComp = getIcon(customTechForm.iconName);
+                                                            return IconComp ? (
+                                                                <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg">
+                                                                    <IconComp className="w-5 h-5" style={{ color: customTechForm.color }} />
+                                                                    <span className="text-gray-900">{customTechForm.name || "Unnamed"}</span>
+                                                                </div>
+                                                            ) : (
+                                                                <span className="text-red-500 text-sm">Icon not found</span>
+                                                            );
+                                                        })()}
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={addCustomTech}
+                                                        disabled={!customTechForm.name.trim()}
+                                                        className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                                                    >
+                                                        + Add
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Selected Tags Preview */}
+                                    {selectedTags.length > 0 && (
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {selectedTags.map((tag) => {
+                                                const { IconComp, color } = getTagIcon(tag);
+                                                return (
+                                                    <span
+                                                        key={tag.name}
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm border border-blue-200"
+                                                    >
+                                                        {IconComp && <IconComp className="w-4 h-4" style={{ color }} />}
+                                                        {tag.name}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => toggleTag(tag.name)}
+                                                            className="ml-1 hover:text-red-500"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </span>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Featured Checkbox */}
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="checkbox"
+                                        id="featured"
+                                        checked={formData.featured}
+                                        onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                                        className="w-5 h-5 rounded bg-gray-50 border-gray-300 accent-blue-600"
+                                    />
+                                    <label htmlFor="featured" className="text-gray-700">Featured Project</label>
+                                </div>
+                            </div>
+                            {/* Fixed Footer */}
+                            <div className="p-6 border-t border-gray-200 shrink-0 flex justify-end gap-3">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-white/70 hover:text-white transition-colors"
+                                    className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors font-medium"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2 bg-linear-to-r from-emerald-500 to-teal-500 text-gray-900 font-semibold rounded-xl hover:from-emerald-400 hover:to-teal-400 transition-all"
+                                    className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25"
                                 >
                                     {editingProject ? "Update" : "Create"}
                                 </button>

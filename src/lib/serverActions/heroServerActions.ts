@@ -1,15 +1,20 @@
-import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
-import prisma from "@/lib/prisma";
+"use server";
 
-// GET - Fetch active hero settings
-export async function GET() {
+import prisma from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
+
+export interface HeroFormData {
+    name: string;
+    role: string;
+    status: "available" | "busy" | "new_project";
+}
+
+export async function getHeroSettingsAction() {
     try {
         let heroSettings = await prisma.heroSettings.findFirst({
             where: { isActive: true },
         });
 
-        // If no settings exist, create default
         if (!heroSettings) {
             heroSettings = await prisma.heroSettings.create({
                 data: {
@@ -21,35 +26,27 @@ export async function GET() {
             });
         }
 
-        return NextResponse.json(heroSettings);
+        return { success: true, data: heroSettings };
     } catch (error) {
         console.error("Failed to fetch hero settings:", error);
-        return NextResponse.json(
-            { error: "Failed to fetch hero settings" },
-            { status: 500 }
-        );
+        return { success: false, error: "Failed to fetch hero settings" };
     }
 }
 
-// PUT - Update hero settings
-export async function PUT(request: Request) {
+export async function updateHeroSettingsAction(formData: HeroFormData) {
     try {
-        const body = await request.json();
-        const { name, role, status } = body;
+        const { name, role, status } = formData;
 
-        // Find active settings
         let heroSettings = await prisma.heroSettings.findFirst({
             where: { isActive: true },
         });
 
         if (heroSettings) {
-            // Update existing
             heroSettings = await prisma.heroSettings.update({
                 where: { id: heroSettings.id },
                 data: { name, role, status },
             });
         } else {
-            // Create new
             heroSettings = await prisma.heroSettings.create({
                 data: {
                     name,
@@ -61,14 +58,11 @@ export async function PUT(request: Request) {
         }
 
         // Revalidate homepage where hero is displayed
-        revalidatePath('/');
+        revalidatePath("/");
 
-        return NextResponse.json(heroSettings);
+        return { success: true, data: heroSettings };
     } catch (error) {
         console.error("Failed to update hero settings:", error);
-        return NextResponse.json(
-            { error: "Failed to update hero settings" },
-            { status: 500 }
-        );
+        return { success: false, error: "Failed to update hero settings" };
     }
 }

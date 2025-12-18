@@ -38,10 +38,11 @@ model Project {
 // Tag Model - Untuk menyimpan tech stack tags
 // ==========================================
 model Tag {
-  id    String  @id @default(cuid())
-  name  String  @unique // e.g., "Next.js", "React", "TypeScript"
-  slug  String  @unique // URL-friendly version
-  color String? // Optional hex color for the tag
+  id       String  @id @default(cuid())
+  name     String  @unique // e.g., "Next.js", "React", "TypeScript"
+  slug     String  @unique // URL-friendly version
+  iconName String? // Icon name dari react-icons (e.g., "SiReact")
+  color    String? // Optional hex color for the tag
 
   // Relasi ke projects
   projects ProjectTag[]

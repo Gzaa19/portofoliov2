@@ -60,30 +60,30 @@ export default function AdminAboutPage() {
     };
 
     if (isLoading) {
-        return <div className="text-white">Loading profile data...</div>;
+        return <div className="text-gray-600">Loading profile data...</div>;
     }
 
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                    <MdPerson className="text-emerald-400" />
+                <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                    <MdPerson className="text-blue-600" />
                     Edit About Me
                 </h1>
             </div>
 
-            <div className="bg-gray-800/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Description */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                             <MdDescription /> Description
                         </label>
                         <textarea
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             rows={6}
-                            className="w-full bg-gray-900/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all placeholder:text-gray-600 resize-none"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-gray-400 resize-none"
                             placeholder="Write something about yourself..."
                         />
                     </div>
@@ -112,7 +112,7 @@ export default function AdminAboutPage() {
                         <button
                             type="submit"
                             disabled={isSaving}
-                            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 shadow-lg shadow-blue-500/25"
                         >
                             <MdSave size={20} />
                             {isSaving ? "Saving..." : "Save Changes"}

@@ -23,6 +23,7 @@ export interface ProjectTag {
     id: string;
     name: string;
     slug: string;
+    iconName?: string | null;
     color?: string | null;
 }
 
@@ -55,6 +56,7 @@ export interface Tag {
     id: string;
     name: string;
     slug: string;
+    iconName?: string | null;
     color?: string | null;
 }
 

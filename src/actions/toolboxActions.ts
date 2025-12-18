@@ -1,7 +1,7 @@
 // ==========================================
 // Toolbox Actions - State management untuk Toolbox
 // ==========================================
-
+'use server';
 import type { ToolboxItem, ToolboxCategory } from "@/types/types";
 
 export interface ToolboxState {

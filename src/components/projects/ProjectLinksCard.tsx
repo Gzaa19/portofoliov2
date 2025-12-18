@@ -18,14 +18,17 @@ export function ProjectLinksCard({ demoUrl, githubUrl, className }: ProjectLinks
 
     return (
         <GlowCard
-            glowColor="green"
+            glowColor="primary"
             glowPosition="top-right"
             glowSize="sm"
             className={className}
         >
             <div className="p-6">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <LinkIcon className="w-5 h-5 text-green-400" />
+                <h3
+                    className="text-lg font-semibold mb-4 flex items-center gap-2"
+                    style={{ color: 'var(--theme-text-heading)' }}
+                >
+                    <LinkIcon className="w-5 h-5 text-blue-600" />
                     Project Links
                 </h3>
                 <div className="flex flex-col gap-3">
@@ -46,7 +49,10 @@ export function ProjectLinksCard({ demoUrl, githubUrl, className }: ProjectLinks
                         </Button>
                     )}
                     {!hasLinks && (
-                        <p className="text-gray-500 text-sm text-center py-4">
+                        <p
+                            className="text-sm text-center py-4"
+                            style={{ color: 'var(--theme-text-muted)' }}
+                        >
                             No external links available.
                         </p>
                     )}

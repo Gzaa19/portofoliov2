@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { GlowCard, Animated, GradientText, Button } from "@/components/ui";
+import { GlowCard, Animated, GradientText } from "@/components/ui";
 import { ToolboxSection } from "@/components/ToolboxSection";
 import { MapCard } from "@/components/MapCard";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
 import { DownloadIcon } from "@/components/icons";
 import { use3DTilt } from "@/hooks";
+import { GRADIENT_PRESETS, THEME_COLORS } from "@/lib/theme";
 import aboutFoto from "@/assets/images/About Foto.png";
 import type { ToolboxCategory } from "@/types/types";
 
@@ -59,7 +60,7 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
                     {/* Section Title */}
                     <Animated animation="fade-in-up" className="text-center mb-12">
                         <GradientText
-                            colors={['#4285f4', '#9b72cb', '#d96570', '#9b72cb', '#4285f4']}
+                            colors={GRADIENT_PRESETS.cleanSaas}
                             animationSpeed={6}
                             className="section-title"
                         >
@@ -106,31 +107,52 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
 
                         {/* Right Side - About Content */}
                         <Animated animation="fade-in-up" delay={400} className="flex-1">
-                            <GlowCard glowColor="blue" glowPosition="top-right" className="p-6 md:p-8">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <GeminiStarIcon size={32} />
-                                    <h3 className="font-serif text-xl md:text-2xl font-bold text-white">
+                            <GlowCard glowColor="primary" glowPosition="top-right" className="p-6 md:p-8">
+                                <div className="flex items-center gap-3 mb-5">
+                                    <GeminiStarIcon size={32} color={THEME_COLORS.primaryHex} />
+                                    <h3
+                                        className="font-serif text-xl md:text-2xl font-bold"
+                                        style={{ color: 'var(--theme-text-heading)' }}
+                                    >
                                         Description
                                     </h3>
                                 </div>
 
-                                <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-6 whitespace-pre-wrap">
+                                <p
+                                    className="text-sm md:text-base mb-8 whitespace-pre-wrap"
+                                    style={{
+                                        color: 'var(--theme-text-body)',
+                                        lineHeight: '1.85',
+                                        letterSpacing: '0.01em'
+                                    }}
+                                >
                                     {description}
                                 </p>
 
-                                {/* Action Buttons */}
+                                {/* Action Buttons - Themed */}
                                 <div className="flex flex-col sm:flex-row gap-4 justify-start">
-                                    <Button asChild>
-                                        <a
-                                            href={resumeLink}
-                                            download
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            <DownloadIcon className="mr-2" />
-                                            Download Resume
-                                        </a>
-                                    </Button>
+                                    <a
+                                        href={resumeLink}
+                                        download
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ease-out"
+                                        style={{
+                                            backgroundColor: 'var(--theme-btn-primary-bg)',
+                                            color: 'var(--theme-btn-primary-text)',
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'var(--theme-btn-primary-hover)';
+                                            e.currentTarget.style.boxShadow = '0 0 24px var(--theme-accent-glow)';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'var(--theme-btn-primary-bg)';
+                                            e.currentTarget.style.boxShadow = 'none';
+                                        }}
+                                    >
+                                        <DownloadIcon className="mr-2 w-4 h-4 transition-transform group-hover:scale-110" />
+                                        Download Resume
+                                    </a>
                                 </div>
                             </GlowCard>
                         </Animated>

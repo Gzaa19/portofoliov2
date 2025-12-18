@@ -13,7 +13,7 @@ interface HeroProps {
 
 /**
  * Hero section - main landing component
- * Content appears immediately without scroll animations
+ * Uses theme from globals.css via CSS variables
  */
 export function Hero({
     name = "Gzaaa",
@@ -30,7 +30,10 @@ export function Hero({
     const currentStatus = statusConfig[status] || statusConfig.busy;
 
     return (
-        <div className="py-32 md:py-48 lg:py-60 relative z-0 overflow-x-clip bg-white">
+        <div
+            className="py-32 md:py-48 lg:py-60 relative z-0 overflow-x-clip"
+            style={{ backgroundColor: 'var(--theme-bg)' }}
+        >
             {/* Hero rings with CSS animation */}
             <div className="size-[620px] hero-ring animate-ring-pulse" />
             <div className="size-[820px] hero-ring animate-ring-pulse delay-500" />
@@ -48,16 +51,22 @@ export function Hero({
                     />
 
                     {/* Status Badge */}
-                    <div className="mt-4">
+                    <div className="mt-1">
                         <StatusBadge variant={currentStatus.variant} text={currentStatus.text} />
                     </div>
 
                     {/* Heading */}
                     <div className="max-w-lg mx-auto">
-                        <h1 className="font-serif text-3xl md:text-5xl text-center mt-8 tracking-wide text-gray-900">
+                        <h1
+                            className="font-serif text-3xl md:text-5xl text-center mt-6 tracking-wide"
+                            style={{ color: 'var(--theme-text-heading)' }}
+                        >
                             Hello, I'm {name}
                         </h1>
-                        <p className="mt-4 text-center text-gray-500 md:text-lg font-sans">
+                        <p
+                            className="mt-4 text-center md:text-lg font-sans"
+                            style={{ color: 'var(--theme-text-body)' }}
+                        >
                             {role}
                         </p>
                     </div>

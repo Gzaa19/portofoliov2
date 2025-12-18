@@ -80,7 +80,7 @@ async function getPortfolioContext() {
 // Create system prompt with RAG context
 function createSystemPrompt(context: Awaited<ReturnType<typeof getPortfolioContext>>) {
     if (!context) {
-        return `You are a virtual assistant for Gzaaa's portfolio, a Full Stack Developer. 
+        return `You are a virtual assistant for Gaza Al Ghozali Chansa portfolio, a Full Stack Developer. 
 Answer visitor questions in a friendly and informative manner. 
 If you don't know the answer, be honest about it.`;
     }
@@ -97,7 +97,7 @@ If you don't know the answer, be honest about it.`;
         `${i + 1}. **${s.platform}** - ${s.username}`
     ).join('\n');
 
-    return `You are a virtual assistant for Gzaaa's portfolio. Gzaaa (pronounced: Gaza) is a Full Stack Developer from Indonesia.
+    return `You are a virtual assistant for Gaza Al Ghozali Chansa portfolio. Gaza Al Ghozali Chansa (pronounced: Gaza) is a Undergraduate Bachelor of Computer Science student from Diponegoro University, Indonesia.
 
 INFORMATION ABOUT GZAAA:
 

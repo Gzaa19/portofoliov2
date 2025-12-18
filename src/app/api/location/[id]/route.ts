@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
 
 interface Params {
@@ -74,6 +75,10 @@ export async function PUT(request: Request, { params }: Params) {
             },
         });
 
+        // Revalidate pages that display location
+        revalidatePath('/');
+        revalidatePath('/contact');
+
         return NextResponse.json(location);
     } catch (error) {
         console.error('Error updating location:', error);
@@ -103,6 +108,10 @@ export async function DELETE(request: Request, { params }: Params) {
         await prisma.location.delete({
             where: { id },
         });
+
+        // Revalidate pages that display location
+        revalidatePath('/');
+        revalidatePath('/contact');
 
         return NextResponse.json({ message: 'Location deleted successfully' });
     } catch (error) {
