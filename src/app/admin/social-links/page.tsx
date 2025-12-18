@@ -1,9 +1,6 @@
 import prisma from "@/lib/prisma";
 import { SocialLinksManager } from "@/components/admin";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 3600;
-
 async function getSocialLinks() {
     const socialLinks = await prisma.socialLink.findMany({
         orderBy: { createdAt: 'desc' },

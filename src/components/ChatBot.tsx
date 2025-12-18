@@ -276,7 +276,6 @@ export function ChatBot() {
                                                 onClick={() => handleSuggestionClick(q.text)}
                                                 className="quick-btn"
                                             >
-                                                <span>{q.icon}</span>
                                                 <span>{q.text}</span>
                                             </button>
                                         ))}
