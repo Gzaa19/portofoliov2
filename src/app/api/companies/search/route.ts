@@ -256,6 +256,7 @@ const LOCAL_COMPANIES: CompanyResult[] = [
     { name: "Glints", domain: "glints.com", logo: getLogoUrl("glints.com") },
     { name: "Kalibrr", domain: "kalibrr.com", logo: getLogoUrl("kalibrr.com") },
     { name: "Asah Ied by Dicoding", domain: "https://www.dicoding.com/asah", logo: getLogoUrl("https://www.dicoding.com/asah") },
+    { name: "SMA N 20 Batam", domain: "https://sman20batam.sch.id/", logo: getLogoUrl("https://sman20batam.sch.id/") },
 ];
 
 // Search in local database

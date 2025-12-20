@@ -12,7 +12,7 @@ const perplexity = new OpenAI({
 async function getPortfolioContext() {
     try {
         // Fetch all data in parallel
-        const [profile, projects, toolboxCategories, socialLinks, location, experiences] = await Promise.all([
+        const [profile, projects, toolboxCategories, socialLinks, location, experiences, educations] = await Promise.all([
             prisma.profile.findFirst({ where: { isActive: true } }),
             prisma.project.findMany({
                 include: {
@@ -34,6 +34,10 @@ async function getPortfolioContext() {
             prisma.socialLink.findMany({ where: { isActive: true } }),
             prisma.location.findFirst({ where: { isActive: true } }),
             prisma.experience.findMany({
+                where: { isActive: true },
+                orderBy: { startDate: 'desc' }
+            }),
+            prisma.education.findMany({
                 where: { isActive: true },
                 orderBy: { startDate: 'desc' }
             })
@@ -75,6 +79,19 @@ async function getPortfolioContext() {
             description: exp.description
         }));
 
+        // Format educations for context
+        const educationsContext = educations.map(edu => ({
+            school: edu.school,
+            degree: edu.degree,
+            fieldOfStudy: edu.fieldOfStudy,
+            startDate: edu.startDate,
+            endDate: edu.endDate,
+            isCurrent: edu.isCurrent,
+            grade: edu.grade,
+            activities: edu.activities,
+            description: edu.description
+        }));
+
         return {
             profile: profile ? {
                 description: profile.description,
@@ -87,7 +104,8 @@ async function getPortfolioContext() {
                 name: location.name,
                 address: location.address
             } : null,
-            experiences: experiencesContext
+            experiences: experiencesContext,
+            educations: educationsContext
         };
     } catch (error) {
         console.error("Error fetching portfolio context:", error);
@@ -144,6 +162,19 @@ If you don't know the answer, be honest about it.`;
         }).join('\n\n')
         : 'No work experience listed.';
 
+    // Format education
+    const educationsList = context.educations && context.educations.length > 0
+        ? context.educations.map((edu, i) => {
+            const duration = `${formatDate(edu.startDate)} - ${edu.isCurrent ? 'Present' : formatDate(edu.endDate)}`;
+            const degree = edu.degree ? ` - ${edu.degree}` : '';
+            const field = edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : '';
+            const grade = edu.grade ? `\n   Grade: ${edu.grade}` : '';
+            const description = edu.description ? `\n   ${edu.description}` : '';
+            const activities = edu.activities ? `\n   Activities: ${edu.activities}` : '';
+            return `${i + 1}. **${edu.school}**${degree}${field}\n   Duration: ${duration}${grade}${description}${activities}`;
+        }).join('\n\n')
+        : 'No education history listed.';
+
     return `You are a virtual assistant for Gaza Al Ghozali Chansa portfolio. Gaza Al Ghozali Chansa (pronounced: Gaza) is a Undergraduate Bachelor of Computer Science student from Diponegoro University, Indonesia.
 
 INFORMATION ABOUT GZAAA:
@@ -153,6 +184,9 @@ ${context.profile?.description || 'Full Stack Developer focused on web developme
 
 ## Work Experience
 ${experiencesList}
+
+## Education
+${educationsList}
 
 ## Projects
 ${projectsList || 'No projects available.'}

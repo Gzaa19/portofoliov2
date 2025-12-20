@@ -35,3 +35,6 @@ export type { SocialLink } from "./socialLinksData";
 // Experience data
 export { getExperiences } from "./experienceData";
 
+// Education data
+export { getEducations } from "./educationData";
+

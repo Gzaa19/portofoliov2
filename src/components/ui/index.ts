@@ -29,3 +29,4 @@ export { EmptyState } from './empty-state';
 
 // Animation components
 export { ScrollFade } from './scroll-fade';
+export { FormattedText } from './FormattedText';

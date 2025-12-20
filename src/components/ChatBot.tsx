@@ -204,7 +204,7 @@ export function ChatBot() {
                             </div>
                             <div className="flex-1">
                                 <h3 className="text-gray-900 dark:text-white font-semibold text-sm">Jagga</h3>
-                                <p className="text-gray-500 dark:text-gray-400 text-xs">Powered by Perplexity AI</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-xs">Powered by Sonar Pro</p>
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
@@ -229,11 +229,19 @@ export function ChatBot() {
                                         {message.role === "assistant" ? (
                                             <ReactMarkdown
                                                 components={{
-                                                    p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                                                    p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>,
                                                     strong: ({ children }) => <strong className="font-bold text-gray-900 dark:text-gray-100">{children}</strong>,
-                                                    ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 my-2 text-gray-800 dark:text-gray-200">{children}</ol>,
-                                                    ul: ({ children }) => <ul className="list-disc list-inside space-y-1 my-2 text-gray-800 dark:text-gray-200">{children}</ul>,
-                                                    li: ({ children }) => <li className="text-gray-700 dark:text-gray-300">{children}</li>,
+                                                    ol: ({ children }) => <ol className="list-decimal list-outside ml-4 space-y-1 my-2 text-gray-800 dark:text-gray-200">{children}</ol>,
+                                                    ul: ({ children }) => <ul className="space-y-2 my-3 pl-1">{children}</ul>,
+                                                    li: ({ children }) => {
+                                                        // Check if children is a string handling normal list items
+                                                        return (
+                                                            <li className="flex items-start gap-3 text-gray-700 dark:text-gray-300 group/li">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-[#4169E1]/80 mt-2 shrink-0 group-hover/li:bg-[#4169E1] transition-colors" />
+                                                                <span className="flex-1">{children}</span>
+                                                            </li>
+                                                        );
+                                                    },
                                                     a: ({ href, children }) => (
                                                         <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
                                                             {children}
@@ -241,7 +249,11 @@ export function ChatBot() {
                                                     ),
                                                 }}
                                             >
-                                                {message.content}
+                                                {/* Preprocess content to handle bullet points and spacing better */}
+                                                {message.content
+                                                    .replace(/ • /g, "\n\n- ") // Handle inline bullets
+                                                    .replace(/^• /gm, "- ")    // Handle start of line bullets
+                                                }
                                             </ReactMarkdown>
                                         ) : (
                                             message.content

@@ -1,6 +1,6 @@
 "use client";
 
-import { GlowCard } from "@/components/ui";
+import { GlowCard, FormattedText } from "@/components/ui";
 import { DocumentIcon } from "@/components/icons";
 
 interface ProjectDescriptionProps {
@@ -26,12 +26,11 @@ export function ProjectDescription({ description, className }: ProjectDescriptio
                     <DocumentIcon className="w-5 h-5 text-blue-600" />
                     About This Project
                 </h2>
-                <p
-                    className="leading-relaxed text-base md:text-lg"
+                <FormattedText
+                    text={description}
+                    className="text-base md:text-lg"
                     style={{ color: 'var(--theme-text-body)' }}
-                >
-                    {description}
-                </p>
+                />
             </div>
         </GlowCard>
     );

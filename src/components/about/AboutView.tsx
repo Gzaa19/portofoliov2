@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { GlowCard, Animated, GradientText } from "@/components/ui";
+import { GlowCard, Animated, GradientText, FormattedText } from "@/components/ui";
 import { Button } from "@/components/ui/button";
 import { ToolboxSection } from "@/components/ToolboxSection";
 import { MapCard } from "@/components/MapCard";
@@ -13,7 +13,8 @@ import { GRADIENT_PRESETS, THEME_COLORS } from "@/lib/theme";
 import { getDownloadUrl } from "@/lib/cloudinaryUtils";
 import aboutFoto from "@/assets/images/About Foto.png";
 import { ExperienceSection } from "./ExperienceSection";
-import type { ToolboxCategory, Experience } from "@/types/types";
+import { EducationSection } from "./EducationSection";
+import type { ToolboxCategory, Experience, Education } from "@/types/types";
 
 const Antigravity = dynamic(() => import("@/components/Antigravity"), {
     ssr: false,
@@ -27,9 +28,10 @@ interface AboutViewProps {
     };
     toolboxCategories?: ToolboxCategory[];
     experiences?: Experience[];
+    educations?: Education[];
 }
 
-export const AboutView = ({ initialData, toolboxCategories, experiences = [] }: AboutViewProps) => {
+export const AboutView = ({ initialData, toolboxCategories, experiences = [], educations = [] }: AboutViewProps) => {
     // Use custom 3D tilt hook
     const { ref: cardRef, rotation, handleMouseMove, handleMouseLeave, perspective } = use3DTilt({
         maxTilt: 15,
@@ -125,16 +127,12 @@ export const AboutView = ({ initialData, toolboxCategories, experiences = [] }: 
                                     </h3>
                                 </div>
 
-                                <p
-                                    className="text-sm md:text-base mb-8 whitespace-pre-wrap"
-                                    style={{
-                                        color: 'var(--theme-text-body)',
-                                        lineHeight: '1.85',
-                                        letterSpacing: '0.01em'
-                                    }}
-                                >
-                                    {description}
-                                </p>
+                                <FormattedText
+                                    text={description}
+                                    textColor=""
+                                    className="mb-8 p-0"
+                                    style={{ color: 'var(--theme-text-body)' }}
+                                />
 
                                 {/* Action Buttons - Themed */}
                                 <div className="flex flex-col sm:flex-row gap-4 justify-start">
@@ -155,6 +153,11 @@ export const AboutView = ({ initialData, toolboxCategories, experiences = [] }: 
                     </div>
                 </div>
             </section>
+
+            {/* Education Section */}
+            {educations && educations.length > 0 && (
+                <EducationSection educations={educations} />
+            )}
 
             {/* Experience Section */}
             {experiences.length > 0 && (

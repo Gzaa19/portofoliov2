@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MdBusiness, MdLocationOn, MdCalendarToday } from "react-icons/md";
 import { Experience, EMPLOYMENT_TYPE_LABELS, LOCATION_TYPE_LABELS } from "@/types/types";
-import { GradientText, GlowCard } from "@/components/ui";
+import { GradientText, GlowCard, FormattedText } from "@/components/ui";
 import { GRADIENT_PRESETS, THEME_COLORS } from "@/lib/theme";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
 
@@ -22,36 +22,35 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!experiences.length || window.innerWidth < 1024) return; // Skip animation on mobile or empty
+        if (!experiences.length || window.innerWidth < 1024) return;
 
-        const section = sectionRef.current;
-        const trigger = triggerRef.current;
-        const container = containerRef.current;
+        const ctx = gsap.context(() => {
+            const section = sectionRef.current;
+            const trigger = triggerRef.current;
 
-        if (!section || !trigger || !container) return;
+            if (!section || !trigger) return;
 
-        const scrollAnimation = gsap.fromTo(
-            section,
-            { translateX: 0 },
-            {
-                translateX: () => `-${section.scrollWidth - window.innerWidth + 200}px`,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: trigger,
-                    start: "top top",
-                    end: () => `+=${section.scrollWidth}`,
-                    scrub: 1,
-                    pin: true,
-                    anticipatePin: 1,
-                    invalidateOnRefresh: true,
-                },
-            }
-        );
+            // Horizontal Scroll Animation
+            gsap.fromTo(
+                section,
+                { x: 0 },
+                {
+                    x: () => `-${section.scrollWidth - window.innerWidth}px`,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: trigger,
+                        start: "top top",
+                        end: () => `+=${section.scrollWidth}`,
+                        scrub: 1,
+                        pin: true,
+                        anticipatePin: 1,
+                        invalidateOnRefresh: true,
+                    },
+                }
+            );
+        }, containerRef);
 
-        return () => {
-            scrollAnimation.kill();
-            ScrollTrigger.getAll().forEach(t => t.kill());
-        };
+        return () => ctx.revert();
     }, [experiences]);
 
     if (!experiences.length) return null;
@@ -215,11 +214,12 @@ function ExperienceCard({ experience, index, isMobile = false }: { experience: E
 
                 {/* Description - Scrollable if too long */}
                 {experience.description && (
-                    <div
-                        className="leading-relaxed text-sm whitespace-pre-wrap overflow-y-auto custom-scrollbar pr-2 mb-6"
-                        style={{ color: 'var(--theme-text-body)' }}
-                    >
-                        {experience.description}
+                    <div className="overflow-y-auto custom-scrollbar pr-2 mb-6">
+                        <FormattedText
+                            text={experience.description}
+                            className="text-sm"
+                            style={{ color: 'var(--theme-text-body)' }}
+                        />
                     </div>
                 )}
             </div>
