@@ -5,6 +5,9 @@ import "./globals.css";
 import { ConditionalHeader } from "@/components/ConditionalHeader";
 import { ChatBotWrapper } from "@/components/ChatBotWrapper";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
+import { ThemeProvider } from "@/components/theme-provider";
+
+import grainImage from "@/assets/images/grain.jpg";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -35,11 +38,23 @@ export default function RootLayout({
           "bg-background text-foreground antialiased font-sans"
         )}
       >
-        <SmoothScrollProvider>
-          <ConditionalHeader />
-          {children}
-          <ChatBotWrapper />
-        </SmoothScrollProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* Grain Overlay - Dark Mode Only */}
+          <div
+            className="fixed inset-0 z-[9999] pointer-events-none opacity-7 hidden dark:block"
+            style={{ backgroundImage: `url(${grainImage.src})` }}
+          />
+          <SmoothScrollProvider>
+            <ConditionalHeader />
+            {children}
+            <ChatBotWrapper />
+          </SmoothScrollProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

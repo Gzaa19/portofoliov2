@@ -25,6 +25,7 @@ model Project {
   github      String? // GitHub repository URL (optional)
   image       String? // Project image URL (optional)
   featured    Boolean  @default(false) // Untuk menandai project unggulan
+  order       Int      @default(0) // Urutan tampil
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -76,6 +77,7 @@ model SocialLink {
   iconName    String // Reference to icon component
   iconBg      String? // CSS class for background
   isActive    Boolean  @default(true)
+  order       Int      @default(0) // Urutan tampil
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -179,4 +181,44 @@ model HeroSettings {
   updatedAt DateTime @updatedAt
 
   @@map("hero_settings")
+}
+
+// ==========================================
+// Experience Model - LinkedIn-style work experience
+// ==========================================
+model Experience {
+  id             String    @id @default(cuid())
+  companyName    String // Nama perusahaan
+  companyLogo    String? // URL logo perusahaan (optional)
+  companyUrl     String? // Website perusahaan (optional)
+  title          String // Posisi/jabatan
+  employmentType String // "full_time", "part_time", "self_employed", "freelance", "contract", "internship", "apprenticeship", "seasonal"
+  location       String? // Lokasi kerja (e.g., "Jakarta, Indonesia")
+  locationType   String    @default("on_site") // "on_site", "hybrid", "remote"
+  startDate      DateTime // Tanggal mulai
+  endDate        DateTime? // Tanggal selesai (null = masih bekerja)
+  isCurrent      Boolean   @default(false) // Apakah masih bekerja di sini
+  description    String?   @db.Text // Deskripsi pekerjaan
+  order          Int       @default(0) // Urutan tampil
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relasi ke skills
+  skills ExperienceSkill[]
+
+  @@map("experiences")
+}
+
+// ==========================================
+// ExperienceSkill - Skills yang digunakan dalam experience
+// ==========================================
+model ExperienceSkill {
+  experienceId String
+  skillName    String // Nama skill (e.g., "React", "TypeScript")
+
+  experience Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  @@id([experienceId, skillName])
+  @@map("experience_skills")
 }

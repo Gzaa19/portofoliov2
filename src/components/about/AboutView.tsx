@@ -3,6 +3,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { GlowCard, Animated, GradientText } from "@/components/ui";
+import { Button } from "@/components/ui/button";
 import { ToolboxSection } from "@/components/ToolboxSection";
 import { MapCard } from "@/components/MapCard";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
@@ -10,7 +11,8 @@ import { DownloadIcon } from "@/components/icons";
 import { use3DTilt } from "@/hooks";
 import { GRADIENT_PRESETS, THEME_COLORS } from "@/lib/theme";
 import aboutFoto from "@/assets/images/About Foto.png";
-import type { ToolboxCategory } from "@/types/types";
+import { ExperienceSection } from "./ExperienceSection";
+import type { ToolboxCategory, Experience } from "@/types/types";
 
 const Antigravity = dynamic(() => import("@/components/Antigravity"), {
     ssr: false,
@@ -23,9 +25,10 @@ interface AboutViewProps {
         resumeUrl?: string;
     };
     toolboxCategories?: ToolboxCategory[];
+    experiences?: Experience[];
 }
 
-export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) => {
+export const AboutView = ({ initialData, toolboxCategories, experiences = [] }: AboutViewProps) => {
     // Use custom 3D tilt hook
     const { ref: cardRef, rotation, handleMouseMove, handleMouseLeave, perspective } = use3DTilt({
         maxTilt: 15,
@@ -71,7 +74,7 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
                     {/* Content Container */}
                     <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16 max-w-6xl mx-auto">
                         {/* Left Side - Photo with 3D Tilt */}
-                        <Animated animation="scale-in" delay={200} className="shrink-0">
+                        <Animated animation="scale-in" delay={200} className="shrink-0 w-full md:w-auto">
                             <div
                                 ref={cardRef}
                                 className="relative"
@@ -80,7 +83,7 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
                                 onMouseLeave={handleMouseLeave}
                             >
                                 <div
-                                    className="relative w-[320px] h-[320px] md:w-[380px] md:h-[380px] lg:w-[420px] lg:h-[420px] overflow-hidden rounded-3xl bg-white shadow-2xl shadow-black/30 cursor-pointer transition-transform duration-300 ease-out hover:scale-[1.02]"
+                                    className="relative w-full aspect-square md:w-[380px] md:h-[380px] lg:w-[420px] lg:h-[420px] overflow-hidden rounded-3xl bg-white shadow-2xl shadow-black/30 cursor-pointer transition-transform duration-300 ease-out hover:scale-[1.02]"
                                     style={{
                                         transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
                                         transformStyle: "preserve-3d",
@@ -131,34 +134,28 @@ export const AboutView = ({ initialData, toolboxCategories }: AboutViewProps) =>
 
                                 {/* Action Buttons - Themed */}
                                 <div className="flex flex-col sm:flex-row gap-4 justify-start">
-                                    <a
-                                        href={resumeLink}
-                                        download
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ease-out"
-                                        style={{
-                                            backgroundColor: 'var(--theme-btn-primary-bg)',
-                                            color: 'var(--theme-btn-primary-text)',
-                                        }}
-                                        onMouseOver={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'var(--theme-btn-primary-hover)';
-                                            e.currentTarget.style.boxShadow = '0 0 24px var(--theme-accent-glow)';
-                                        }}
-                                        onMouseOut={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'var(--theme-btn-primary-bg)';
-                                            e.currentTarget.style.boxShadow = 'none';
-                                        }}
-                                    >
-                                        <DownloadIcon className="mr-2 w-4 h-4 transition-transform group-hover:scale-110" />
-                                        Download Resume
-                                    </a>
+                                    <Button asChild size="lg" className="group rounded-xl font-semibold text-sm">
+                                        <a
+                                            href={resumeLink}
+                                            download
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            <DownloadIcon className="mr-2 w-4 h-4 transition-transform group-hover:scale-110" />
+                                            Download Resume
+                                        </a>
+                                    </Button>
                                 </div>
                             </GlowCard>
                         </Animated>
                     </div>
                 </div>
             </section>
+
+            {/* Experience Section */}
+            {experiences.length > 0 && (
+                <ExperienceSection experiences={experiences} />
+            )}
 
             {/* Tech Stack Section */}
             <Animated animation="fade-in-up" delay={200} threshold={0.2}>

@@ -106,7 +106,7 @@ export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
                                             </div>
                                             <span
                                                 className="text-[10px] md:text-sm font-medium text-center transition-colors truncate w-full px-1"
-                                                style={{ color: THEME_COLORS.headingHex }}
+                                                style={{ color: 'var(--theme-text-heading)' }}
                                             >
                                                 {item.name}
                                             </span>

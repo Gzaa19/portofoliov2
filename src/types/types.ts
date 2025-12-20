@@ -201,3 +201,92 @@ export interface PillNavProps {
     items: NavItem[];
     className?: string;
 }
+
+// ==========================================
+// Experience Types (LinkedIn-style)
+// ==========================================
+export type EmploymentType =
+    | "full_time"
+    | "part_time"
+    | "self_employed"
+    | "freelance"
+    | "contract"
+    | "internship"
+    | "apprenticeship"
+    | "seasonal";
+
+export type LocationType = "on_site" | "hybrid" | "remote";
+
+export interface Experience {
+    id: string;
+    companyName: string;
+    companyLogo?: string | null;
+    companyUrl?: string | null;
+    title: string;
+    employmentType: EmploymentType;
+    location?: string | null;
+    locationType: LocationType;
+    startDate: Date | string;
+    endDate?: Date | string | null;
+    isCurrent: boolean;
+    description?: string | null;
+    order: number;
+    isActive: boolean;
+    skills: string[];
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
+export interface CreateExperienceInput {
+    companyName: string;
+    companyLogo?: string;
+    companyUrl?: string;
+    title: string;
+    employmentType: EmploymentType;
+    location?: string;
+    locationType?: LocationType;
+    startDate: string; // ISO date string
+    endDate?: string; // ISO date string
+    isCurrent?: boolean;
+    description?: string;
+    order?: number;
+    isActive?: boolean;
+    skills?: string[];
+}
+
+export interface UpdateExperienceInput {
+    companyName?: string;
+    companyLogo?: string | null;
+    companyUrl?: string | null;
+    title?: string;
+    employmentType?: EmploymentType;
+    location?: string | null;
+    locationType?: LocationType;
+    startDate?: string;
+    endDate?: string | null;
+    isCurrent?: boolean;
+    description?: string | null;
+    order?: number;
+    isActive?: boolean;
+    skills?: string[];
+}
+
+// Employment type display labels
+export const EMPLOYMENT_TYPE_LABELS: Record<EmploymentType, string> = {
+    full_time: "Full-time",
+    part_time: "Part-time",
+    self_employed: "Self-employed",
+    freelance: "Freelance",
+    contract: "Contract",
+    internship: "Internship",
+    apprenticeship: "Apprenticeship",
+    seasonal: "Seasonal",
+};
+
+// Location type display labels
+export const LOCATION_TYPE_LABELS: Record<LocationType, string> = {
+    on_site: "On-site",
+    hybrid: "Hybrid",
+    remote: "Remote",
+};
+

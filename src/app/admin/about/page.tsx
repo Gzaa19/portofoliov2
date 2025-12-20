@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { MdSave, MdPerson, MdDescription } from "react-icons/md";
 import { FileDropzone } from "@/components/admin/FileDropzone";
+import { ExperienceManager } from "@/components/admin/ExperienceManager";
 
 export default function AdminAboutPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -119,6 +120,11 @@ export default function AdminAboutPage() {
                         </button>
                     </div>
                 </form>
+            </div>
+
+            {/* Experience Section */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                <ExperienceManager />
             </div>
         </div>
     );

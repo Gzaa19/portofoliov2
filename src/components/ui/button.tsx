@@ -9,18 +9,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Primary: Royal Blue with white text
-        default: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm",
+        // Primary: Royal Blue with white text, Dark Mode: Gray -> Black+Glow
+        default: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm dark:bg-zinc-800 dark:text-white dark:hover:bg-black dark:hover:shadow-[var(--theme-glow-shadow)] hover:scale-[1.02] transition-all duration-300",
         // Destructive: Red
-        destructive: "bg-red-600 text-white hover:bg-red-700 shadow-sm",
-        // Outline: White bg with border
-        outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-blue-600 shadow-sm",
+        destructive: "bg-red-600 text-white hover:bg-red-700 shadow-sm dark:bg-red-900/50 dark:hover:bg-red-900/70",
+        // Outline: White bg with border, Dark Mode: Transparent/Gray -> Black+Glow
+        outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-blue-600 shadow-sm dark:bg-transparent dark:text-gray-300 dark:border-zinc-700 dark:hover:bg-black dark:hover:text-white dark:hover:border-black dark:hover:shadow-[var(--theme-glow-shadow)] hover:scale-[1.02] transition-all duration-300",
         // Secondary: Light gray
-        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700",
         // Ghost: Transparent
-        ghost: "hover:bg-gray-100 hover:text-gray-900",
+        ghost: "hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-100",
         // Link: Text only
-        link: "text-blue-600 underline-offset-4 hover:underline",
+        link: "text-blue-600 underline-offset-4 hover:underline dark:text-blue-400",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

@@ -31,3 +31,7 @@ export type { ToolboxCategory, ToolboxItem } from "@/types/types";
 // Social links data
 export { getSocialLinks } from "./socialLinksData";
 export type { SocialLink } from "./socialLinksData";
+
+// Experience data
+export { getExperiences } from "./experienceData";
+

@@ -145,8 +145,7 @@ export function ChatBot() {
             {/* Chat Toggle Button - Light Teal Theme */}
             <motion.button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center group border border-gray-200"
-                style={{ backgroundColor: '#F1F5F9' }}
+                className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center group border border-gray-200 dark:border-gray-700 bg-[#F1F5F9] dark:bg-[#2D2E30]"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 aria-label={isOpen ? "Close chat" : "Open chat"}
@@ -158,7 +157,7 @@ export function ChatBot() {
                             initial={{ rotate: -90, opacity: 0 }}
                             animate={{ rotate: 0, opacity: 1 }}
                             exit={{ rotate: 90, opacity: 0 }}
-                            className="w-6 h-6 text-gray-700"
+                            className="w-6 h-6 text-gray-700 dark:text-gray-200"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -204,12 +203,12 @@ export function ChatBot() {
                                 />
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-gray-900 font-semibold text-sm">Jagga</h3>
-                                <p className="text-gray-500 text-xs">Powered by Perplexity AI</p>
+                                <h3 className="text-gray-900 dark:text-white font-semibold text-sm">Jagga</h3>
+                                <p className="text-gray-500 dark:text-gray-400 text-xs">Powered by Perplexity AI</p>
                             </div>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-1 hover:bg-gray-200 rounded-lg text-gray-500 hover:text-gray-700 transition-colors"
+                                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -218,7 +217,7 @@ export function ChatBot() {
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-[#1E1F20] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-600 transition-colors duration-300">
                             {messages.map((message) => (
                                 <motion.div
                                     key={message.id}
@@ -231,12 +230,12 @@ export function ChatBot() {
                                             <ReactMarkdown
                                                 components={{
                                                     p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                                                    strong: ({ children }) => <strong className="font-bold text-gray-900">{children}</strong>,
-                                                    ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 my-2 text-gray-800">{children}</ol>,
-                                                    ul: ({ children }) => <ul className="list-disc list-inside space-y-1 my-2 text-gray-800">{children}</ul>,
-                                                    li: ({ children }) => <li className="text-gray-700">{children}</li>,
+                                                    strong: ({ children }) => <strong className="font-bold text-gray-900 dark:text-gray-100">{children}</strong>,
+                                                    ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 my-2 text-gray-800 dark:text-gray-200">{children}</ol>,
+                                                    ul: ({ children }) => <ul className="list-disc list-inside space-y-1 my-2 text-gray-800 dark:text-gray-200">{children}</ul>,
+                                                    li: ({ children }) => <li className="text-gray-700 dark:text-gray-300">{children}</li>,
                                                     a: ({ href, children }) => (
-                                                        <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">
+                                                        <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
                                                             {children}
                                                         </a>
                                                     ),
@@ -272,12 +271,12 @@ export function ChatBot() {
                         </div>
 
                         {/* Input Area - Light Theme */}
-                        <div className="border-t border-gray-200 bg-white">
+                        <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1E1F20] transition-colors duration-300">
                             {/* Quick Questions */}
                             {showSuggestions && messages.length === 1 && !isLoading && (
                                 <div className="px-4 pt-3 pb-2">
-                                    <p className="text-xs text-gray-500 mb-2 font-medium">Quick questions:</p>
-                                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium">Quick questions:</p>
+                                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
                                         {SUGGESTED_QUESTIONS.map((q, index) => (
                                             <button
                                                 key={index}

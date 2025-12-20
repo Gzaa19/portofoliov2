@@ -26,7 +26,7 @@ export default async function ProjectDetailPage({ params }: Props) {
 
     return (
         <PageLayout
-            particleCount={600}
+            showParticles={false}
             className="py-24 md:py-32"
             containerClassName="pointer-events-auto"
         >

@@ -33,7 +33,7 @@ export function ProjectCard({
         <div
             className={cn(
                 "group relative h-full flex flex-col rounded-3xl overflow-hidden cq-container",
-                "hover:shadow-xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up",
+                "hover:shadow-xl dark:hover:shadow-[var(--theme-glow-shadow)] transition-all duration-300 hover:-translate-y-2 animate-fade-in-up",
                 className
             )}
             style={{
@@ -90,10 +90,6 @@ export function ProjectCard({
                         <Button
                             size="sm"
                             asChild
-                            style={{
-                                backgroundColor: THEME_COLORS.primaryHex,
-                                color: '#FFFFFF',
-                            }}
                         >
                             <Link href={detailLink}>
                                 View Project

@@ -364,7 +364,7 @@ const PillNav: React.FC<PillNavProps> = ({
           onClick={toggleMobileMenu}
           aria-label="Toggle menu"
           aria-expanded={isMobileMenuOpen}
-          className="md:hidden rounded-full border-0 flex flex-col items-center justify-center gap-1 cursor-pointer p-0 relative"
+          className="md:hidden ml-auto rounded-full border border-black/10 dark:border-white/10 shadow-sm flex flex-col items-center justify-center gap-1 cursor-pointer p-0 relative transition-all hover:bg-black/5 dark:hover:bg-white/10"
           style={{
             width: 'var(--nav-h)',
             height: 'var(--nav-h)',
@@ -372,12 +372,12 @@ const PillNav: React.FC<PillNavProps> = ({
           }}
         >
           <span
-            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-[10ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]"
-            style={{ background: 'var(--pill-bg, #fff)' }}
+            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+            style={{ background: 'var(--pill-text, #000)' }}
           />
           <span
-            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-[10ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]"
-            style={{ background: 'var(--pill-bg, #fff)' }}
+            className="hamburger-line w-4 h-0.5 rounded origin-center transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+            style={{ background: 'var(--pill-text, #000)' }}
           />
         </button>
       </nav>
