@@ -6,10 +6,6 @@ import {
     MdAdd,
     MdEdit,
     MdDelete,
-    MdDateRange,
-    MdLocationOn,
-    MdWork,
-    MdDragIndicator
 } from "react-icons/md";
 import {
     Experience,
@@ -19,7 +15,7 @@ import {
     EmploymentType,
     LocationType
 } from "@/types/types";
-import Image from "next/image";
+import { CompanySearchInput } from "./CompanySearchInput";
 
 export function ExperienceManager() {
     const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -43,11 +39,9 @@ export function ExperienceManager() {
         description: "",
         order: 0,
         isActive: true,
-        skills: []
     };
 
     const [formData, setFormData] = useState<CreateExperienceInput>(initialFormState);
-    const [currentSkill, setCurrentSkill] = useState("");
 
     useEffect(() => {
         fetchExperiences();
@@ -82,7 +76,6 @@ export function ExperienceManager() {
             description: experience.description || "",
             order: experience.order,
             isActive: experience.isActive,
-            skills: experience.skills
         });
         setIsEditing(experience.id);
         setShowForm(true);
@@ -151,26 +144,6 @@ export function ExperienceManager() {
         }
     };
 
-    const addSkill = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && currentSkill.trim()) {
-            e.preventDefault();
-            if (!formData.skills?.includes(currentSkill.trim())) {
-                setFormData({
-                    ...formData,
-                    skills: [...(formData.skills || []), currentSkill.trim()]
-                });
-                setCurrentSkill("");
-            }
-        }
-    };
-
-    const removeSkill = (skillToRemove: string) => {
-        setFormData({
-            ...formData,
-            skills: formData.skills?.filter(skill => skill !== skillToRemove)
-        });
-    };
-
     if (isLoading) return <div>Loading experiences...</div>;
 
     return (
@@ -209,12 +182,11 @@ export function ExperienceManager() {
                                 <div className="flex items-start gap-4">
                                     <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 border border-gray-200 overflow-hidden">
                                         {exp.companyLogo ? (
-                                            <Image
+                                            /* eslint-disable-next-line @next/next/no-img-element */
+                                            <img
                                                 src={exp.companyLogo}
                                                 alt={exp.companyName}
-                                                width={48}
-                                                height={48}
-                                                className="w-full h-full object-cover"
+                                                className="w-full h-full object-contain p-1"
                                             />
                                         ) : (
                                             <MdBusiness className="text-gray-400 text-2xl" />
@@ -286,7 +258,7 @@ export function ExperienceManager() {
                                         required
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                                         placeholder="Ex: Senior Frontend Developer"
                                     />
                                 </div>
@@ -297,7 +269,7 @@ export function ExperienceManager() {
                                         required
                                         value={formData.employmentType}
                                         onChange={(e) => setFormData({ ...formData, employmentType: e.target.value as EmploymentType })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-white"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-white text-gray-900"
                                     >
                                         {Object.entries(EMPLOYMENT_TYPE_LABELS).map(([key, label]) => (
                                             <option key={key} value={key}>{label}</option>
@@ -305,26 +277,22 @@ export function ExperienceManager() {
                                     </select>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Company Name *</label>
-                                    <input
-                                        type="text"
-                                        required
+                                <div className="space-y-2 md:col-span-2">
+                                    <label className="text-sm font-medium text-gray-700">Company *</label>
+                                    <CompanySearchInput
                                         value={formData.companyName}
-                                        onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                                        placeholder="Ex: Google"
+                                        logoUrl={formData.companyLogo || ""}
+                                        onCompanyChange={(name, logo) => setFormData({
+                                            ...formData,
+                                            companyName: name,
+                                            companyLogo: logo
+                                        })}
+                                        placeholder="Search company (e.g., Google, Tokopedia)..."
+                                        required
                                     />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Company Logo URL (Optional)</label>
-                                    <input
-                                        type="url"
-                                        value={formData.companyLogo || ""}
-                                        onChange={(e) => setFormData({ ...formData, companyLogo: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                                        placeholder="https://..."
-                                    />
+                                    <p className="text-xs text-gray-500">
+                                        Search a company to auto-fill the logo, or type a custom name
+                                    </p>
                                 </div>
 
                                 <div className="space-y-2">
@@ -333,7 +301,7 @@ export function ExperienceManager() {
                                         type="text"
                                         value={formData.location || ""}
                                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                                         placeholder="Ex: Jakarta, Indonesia"
                                     />
                                 </div>
@@ -342,7 +310,7 @@ export function ExperienceManager() {
                                     <select
                                         value={formData.locationType}
                                         onChange={(e) => setFormData({ ...formData, locationType: e.target.value as LocationType })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-white"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all bg-white text-gray-900"
                                     >
                                         {Object.entries(LOCATION_TYPE_LABELS).map(([key, label]) => (
                                             <option key={key} value={key}>{label}</option>
@@ -357,7 +325,7 @@ export function ExperienceManager() {
                                         required
                                         value={formData.startDate}
                                         onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-gray-900"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -379,36 +347,9 @@ export function ExperienceManager() {
                                         disabled={formData.isCurrent}
                                         value={formData.endDate || ""}
                                         onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all disabled:bg-gray-100 disabled:text-gray-400"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all disabled:bg-gray-100 disabled:text-gray-400 text-gray-900"
                                     />
                                 </div>
-                            </div>
-
-                            {/* Skills */}
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Skills Used</label>
-                                <div className="flex flex-wrap gap-2 mb-2">
-                                    {formData.skills?.map((skill, idx) => (
-                                        <div key={idx} className="flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium border border-blue-100">
-                                            {skill}
-                                            <button
-                                                type="button"
-                                                onClick={() => removeSkill(skill)}
-                                                className="hover:text-blue-900 transition-colors"
-                                            >
-                                                ×
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                                <input
-                                    type="text"
-                                    value={currentSkill}
-                                    onChange={(e) => setCurrentSkill(e.target.value)}
-                                    onKeyDown={addSkill}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                                    placeholder="Type a skill and press Enter..."
-                                />
                             </div>
 
                             {/* Description */}
@@ -418,7 +359,7 @@ export function ExperienceManager() {
                                     value={formData.description || ""}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     rows={4}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-y"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-y text-gray-900 placeholder:text-gray-400"
                                     placeholder="Describe your role, responsibilities, and achievements..."
                                 />
                             </div>

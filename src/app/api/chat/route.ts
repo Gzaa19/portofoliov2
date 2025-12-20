@@ -12,7 +12,7 @@ const perplexity = new OpenAI({
 async function getPortfolioContext() {
     try {
         // Fetch all data in parallel
-        const [profile, projects, toolboxCategories, socialLinks, location] = await Promise.all([
+        const [profile, projects, toolboxCategories, socialLinks, location, experiences] = await Promise.all([
             prisma.profile.findFirst({ where: { isActive: true } }),
             prisma.project.findMany({
                 include: {
@@ -32,7 +32,11 @@ async function getPortfolioContext() {
                 orderBy: { order: 'asc' }
             }),
             prisma.socialLink.findMany({ where: { isActive: true } }),
-            prisma.location.findFirst({ where: { isActive: true } })
+            prisma.location.findFirst({ where: { isActive: true } }),
+            prisma.experience.findMany({
+                where: { isActive: true },
+                orderBy: { startDate: 'desc' }
+            })
         ]);
 
         // Format projects for context
@@ -58,6 +62,19 @@ async function getPortfolioContext() {
             url: s.url
         }));
 
+        // Format experiences for context
+        const experiencesContext = experiences.map(exp => ({
+            company: exp.companyName,
+            title: exp.title,
+            employmentType: exp.employmentType,
+            location: exp.location,
+            locationType: exp.locationType,
+            startDate: exp.startDate,
+            endDate: exp.endDate,
+            isCurrent: exp.isCurrent,
+            description: exp.description
+        }));
+
         return {
             profile: profile ? {
                 description: profile.description,
@@ -69,7 +86,8 @@ async function getPortfolioContext() {
             location: location ? {
                 name: location.name,
                 address: location.address
-            } : null
+            } : null,
+            experiences: experiencesContext
         };
     } catch (error) {
         console.error("Error fetching portfolio context:", error);
@@ -97,12 +115,44 @@ If you don't know the answer, be honest about it.`;
         `${i + 1}. **${s.platform}** - ${s.username}`
     ).join('\n');
 
+    // Format work experience
+    const formatEmploymentType = (type: string) => {
+        const types: Record<string, string> = {
+            'full_time': 'Full-time',
+            'part_time': 'Part-time',
+            'self_employed': 'Self-employed',
+            'freelance': 'Freelance',
+            'contract': 'Contract',
+            'internship': 'Internship',
+            'apprenticeship': 'Apprenticeship',
+            'seasonal': 'Seasonal'
+        };
+        return types[type] || type;
+    };
+
+    const formatDate = (date: Date | null) => {
+        if (!date) return 'Present';
+        return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    };
+
+    const experiencesList = context.experiences && context.experiences.length > 0
+        ? context.experiences.map((exp, i) => {
+            const duration = `${formatDate(exp.startDate)} - ${exp.isCurrent ? 'Present' : formatDate(exp.endDate)}`;
+            const location = exp.location ? ` (${exp.location}, ${exp.locationType})` : '';
+            const description = exp.description ? `\n   ${exp.description}` : '';
+            return `${i + 1}. **${exp.title}** at **${exp.company}** - ${formatEmploymentType(exp.employmentType)}${location}\n   Duration: ${duration}${description}`;
+        }).join('\n\n')
+        : 'No work experience listed.';
+
     return `You are a virtual assistant for Gaza Al Ghozali Chansa portfolio. Gaza Al Ghozali Chansa (pronounced: Gaza) is a Undergraduate Bachelor of Computer Science student from Diponegoro University, Indonesia.
 
 INFORMATION ABOUT GZAAA:
 
 ## About
 ${context.profile?.description || 'Full Stack Developer focused on web development.'}
+
+## Work Experience
+${experiencesList}
 
 ## Projects
 ${projectsList || 'No projects available.'}

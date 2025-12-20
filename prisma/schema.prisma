@@ -204,21 +204,28 @@ model Experience {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  // Relasi ke skills
-  skills ExperienceSkill[]
-
   @@map("experiences")
 }
 
 // ==========================================
-// ExperienceSkill - Skills yang digunakan dalam experience
+// Education Model - Untuk menyimpan riwayat pendidikan
 // ==========================================
-model ExperienceSkill {
-  experienceId String
-  skillName    String // Nama skill (e.g., "React", "TypeScript")
+model Education {
+  id           String    @id @default(cuid())
+  school       String // Nama sekolah/universitas
+  degree       String? // Gelar (e.g., "Bachelor's degree")
+  fieldOfStudy String? // Jurusan (e.g., "Computer Science")
+  startDate    DateTime // Tanggal mulai
+  endDate      DateTime? // Tanggal selesai (null = masih sekolah)
+  isCurrent    Boolean   @default(false)
+  grade        String? // Nilai / GPA
+  activities   String?   @db.Text // Aktivitas dan perkumpulan social
+  description  String?   @db.Text // Deskripsi
+  logoUrl      String? // Logo sekolah
+  order        Int       @default(0) // Urutan tampil
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  experience Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
-
-  @@id([experienceId, skillName])
-  @@map("experience_skills")
+  @@map("educations")
 }

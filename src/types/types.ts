@@ -232,7 +232,6 @@ export interface Experience {
     description?: string | null;
     order: number;
     isActive: boolean;
-    skills: string[];
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -251,7 +250,6 @@ export interface CreateExperienceInput {
     description?: string;
     order?: number;
     isActive?: boolean;
-    skills?: string[];
 }
 
 export interface UpdateExperienceInput {
@@ -268,7 +266,6 @@ export interface UpdateExperienceInput {
     description?: string | null;
     order?: number;
     isActive?: boolean;
-    skills?: string[];
 }
 
 // Employment type display labels
@@ -289,4 +286,55 @@ export const LOCATION_TYPE_LABELS: Record<LocationType, string> = {
     hybrid: "Hybrid",
     remote: "Remote",
 };
+
+// ==========================================
+// Education Types
+// ==========================================
+export interface Education {
+    id: string;
+    school: string;
+    degree?: string | null;
+    fieldOfStudy?: string | null;
+    startDate: Date | string;
+    endDate?: Date | string | null;
+    isCurrent: boolean;
+    grade?: string | null;
+    activities?: string | null;
+    description?: string | null;
+    logoUrl?: string | null;
+    order: number;
+    isActive: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
+export interface CreateEducationInput {
+    school: string;
+    degree?: string;
+    fieldOfStudy?: string;
+    startDate: string; // ISO date string
+    endDate?: string; // ISO date string
+    isCurrent?: boolean;
+    grade?: string;
+    activities?: string;
+    description?: string;
+    logoUrl?: string;
+    order?: number;
+    isActive?: boolean;
+}
+
+export interface UpdateEducationInput {
+    school?: string;
+    degree?: string | null;
+    fieldOfStudy?: string | null;
+    startDate?: string;
+    endDate?: string | null;
+    isCurrent?: boolean;
+    grade?: string | null;
+    activities?: string | null;
+    description?: string | null;
+    logoUrl?: string | null;
+    order?: number;
+    isActive?: boolean;
+}
 

@@ -14,7 +14,7 @@ export function GitHubIcon({ className, size = 32 }: IconProps) {
     return (
         <svg
             viewBox="0 0 24 24"
-            className={cn("fill-current text-[#181717]", className)}
+            className={cn("fill-current text-[#181717] dark:text-white", className)}
             width={size}
             height={size}
         >

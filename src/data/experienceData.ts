@@ -6,9 +6,6 @@ export async function getExperiences(): Promise<Experience[]> {
     try {
         const experiences = await prisma.experience.findMany({
             where: { isActive: true },
-            include: {
-                skills: true,
-            },
             orderBy: [
                 { isCurrent: 'desc' },
                 { startDate: 'desc' },
@@ -19,7 +16,6 @@ export async function getExperiences(): Promise<Experience[]> {
         // Transform data to match Experience interface
         return experiences.map(exp => ({
             ...exp,
-            skills: exp.skills.map(s => s.skillName),
             employmentType: exp.employmentType as any,
             locationType: exp.locationType as any,
         }));

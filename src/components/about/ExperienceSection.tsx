@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MdBusiness, MdLocationOn, MdCalendarToday } from "react-icons/md";
@@ -145,11 +144,9 @@ function ExperienceCard({ experience, index, isMobile = false }: { experience: E
                 <div className="flex gap-4 items-center">
                     <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center p-2 overflow-hidden border border-gray-100 shrink-0">
                         {experience.companyLogo ? (
-                            <Image
+                            <img
                                 src={experience.companyLogo}
                                 alt={experience.companyName}
-                                width={64}
-                                height={64}
                                 className="object-contain w-full h-full"
                             />
                         ) : (
@@ -192,9 +189,20 @@ function ExperienceCard({ experience, index, isMobile = false }: { experience: E
                     </div>
                     {/* Divider dot */}
                     <span className="text-gray-300">•</span>
+
+                    {/* Employment Type */}
                     <div className="flex items-center gap-1.5">
-                        <span className={experience.locationType === 'remote' ? "text-green-500" : "text-orange-500"}>
-                            {LOCATION_TYPE_LABELS[experience.locationType]}
+                        <span className="text-blue-600">
+                            {EMPLOYMENT_TYPE_LABELS[experience.employmentType] || experience.employmentType.replace('_', ' ')}
+                        </span>
+                    </div>
+
+                    <span className="text-gray-300">•</span>
+
+                    {/* Location Type */}
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-blue-600">
+                            {LOCATION_TYPE_LABELS[experience.locationType] || experience.locationType.replace('_', ' ')}
                         </span>
                     </div>
                     {experience.location && (
@@ -216,29 +224,8 @@ function ExperienceCard({ experience, index, isMobile = false }: { experience: E
                 )}
             </div>
 
-            {/* Skills Footer */}
-            <div className="pt-6 mt-auto border-t border-dashed border-gray-200/50">
-                <div className="flex flex-wrap gap-2">
-                    {experience.skills?.slice(0, 6).map((skill, i) => (
-                        <span
-                            key={i}
-                            className="px-3 py-1 text-xs font-medium rounded-full border bg-opacity-50 transition-colors"
-                            style={{
-                                backgroundColor: 'var(--theme-bg-secondary)',
-                                borderColor: 'var(--theme-card-border)',
-                                color: 'var(--theme-text-muted)'
-                            }}
-                        >
-                            {skill}
-                        </span>
-                    ))}
-                    {(experience.skills?.length || 0) > 6 && (
-                        <span className="px-3 py-1 text-xs font-medium text-gray-400">
-                            +{experience.skills!.length - 6} more
-                        </span>
-                    )}
-                </div>
-            </div>
+            {/* Footer space if needed, or just remove border */}
+            <div className="mt-auto"></div>
         </GlowCard>
     );
 }

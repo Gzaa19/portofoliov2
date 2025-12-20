@@ -46,7 +46,7 @@ export default function RootLayout({
         >
           {/* Grain Overlay - Dark Mode Only */}
           <div
-            className="fixed inset-0 z-[9999] pointer-events-none opacity-7 hidden dark:block"
+            className="fixed inset-0 z-[9999] pointer-events-none opacity-4 hidden dark:block"
             style={{ backgroundImage: `url(${grainImage.src})` }}
           />
           <SmoothScrollProvider>

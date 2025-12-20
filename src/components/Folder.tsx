@@ -107,10 +107,7 @@ const Folder: React.FC<FolderProps> = ({ color = '#5227FF', size = 1, items = []
             style={{ backgroundColor: folderBackColor }}
           ></span>
           {papers.map((item, i) => {
-            let sizeClasses = '';
-            if (i === 0) sizeClasses = open ? 'w-[70%] h-[80%]' : 'w-[70%] h-[80%]';
-            if (i === 1) sizeClasses = open ? 'w-[80%] h-[80%]' : 'w-[80%] h-[70%]';
-            if (i === 2) sizeClasses = open ? 'w-[90%] h-[80%]' : 'w-[90%] h-[60%]';
+            const sizeClasses = 'w-[90%] h-[80%]';
 
             const transformStyle = open
               ? `${getOpenTransform(i)} translate(${paperOffsets[i].x}px, ${paperOffsets[i].y}px)`
@@ -125,7 +122,7 @@ const Folder: React.FC<FolderProps> = ({ color = '#5227FF', size = 1, items = []
                   } ${sizeClasses}`}
                 style={{
                   ...(!open ? {} : { transform: transformStyle }),
-                  backgroundColor: i === 0 ? paper1 : i === 1 ? paper2 : paper3,
+                  backgroundColor: 'transparent',
                   borderRadius: '10px'
                 }}
               >

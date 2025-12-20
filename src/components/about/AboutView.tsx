@@ -10,6 +10,7 @@ import { GeminiStarIcon } from "@/components/GeminiStarIcon";
 import { DownloadIcon } from "@/components/icons";
 import { use3DTilt } from "@/hooks";
 import { GRADIENT_PRESETS, THEME_COLORS } from "@/lib/theme";
+import { getDownloadUrl } from "@/lib/cloudinaryUtils";
 import aboutFoto from "@/assets/images/About Foto.png";
 import { ExperienceSection } from "./ExperienceSection";
 import type { ToolboxCategory, Experience } from "@/types/types";
@@ -38,7 +39,10 @@ export const AboutView = ({ initialData, toolboxCategories, experiences = [] }: 
     // Use DB data or fallback
     const description = initialData?.description || "With expertise in React, Next.js, Node.js, and various modern technologies, I create digital solutions that make a difference. I believe in continuous learning and staying up-to-date with the latest industry trends.";
     const photoSrc = initialData?.photoUrl || aboutFoto;
-    const resumeLink = initialData?.resumeUrl || "/resume.pdf";
+    // Convert Cloudinary URL to downloadable format to avoid encryption issues
+    const resumeLink = initialData?.resumeUrl
+        ? getDownloadUrl(initialData.resumeUrl, "resume.pdf")
+        : "/resume.pdf";
 
     return (
         <>

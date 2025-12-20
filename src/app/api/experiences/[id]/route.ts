@@ -12,9 +12,6 @@ export async function GET(
 
         const experience = await prisma.experience.findUnique({
             where: { id },
-            include: {
-                skills: true,
-            },
         });
 
         if (!experience) {
@@ -24,13 +21,7 @@ export async function GET(
             );
         }
 
-        // Transform the data
-        const transformedExperience = {
-            ...experience,
-            skills: experience.skills.map((s) => s.skillName),
-        };
-
-        return NextResponse.json(transformedExperience);
+        return NextResponse.json(experience);
     } catch (error) {
         console.error("Failed to fetch experience:", error);
         return NextResponse.json(
@@ -62,7 +53,6 @@ export async function PUT(
             description,
             order,
             isActive,
-            skills,
         } = body;
 
         // Find the experience
@@ -100,42 +90,10 @@ export async function PUT(
             },
         });
 
-        // Handle skills if provided
-        if (skills && Array.isArray(skills)) {
-            // Remove existing skills
-            await prisma.experienceSkill.deleteMany({
-                where: { experienceId: id },
-            });
-
-            // Add new skills
-            if (skills.length > 0) {
-                await prisma.experienceSkill.createMany({
-                    data: skills.map((skillName: string) => ({
-                        experienceId: id,
-                        skillName,
-                    })),
-                });
-            }
-        }
-
-        // Fetch the complete experience with skills
-        const completeExperience = await prisma.experience.findUnique({
-            where: { id: updatedExperience.id },
-            include: {
-                skills: true,
-            },
-        });
-
-        // Transform for response
-        const transformedExperience = completeExperience ? {
-            ...completeExperience,
-            skills: completeExperience.skills.map((s) => s.skillName),
-        } : null;
-
         revalidatePath('/');
         revalidatePath('/about');
 
-        return NextResponse.json(transformedExperience);
+        return NextResponse.json(updatedExperience);
     } catch (error) {
         console.error("Failed to update experience:", error);
         return NextResponse.json(
@@ -165,7 +123,7 @@ export async function DELETE(
             );
         }
 
-        // Delete the experience (cascade will delete related skills)
+        // Delete the experience
         await prisma.experience.delete({
             where: { id },
         });

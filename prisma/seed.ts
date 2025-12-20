@@ -149,7 +149,6 @@ const experiencesData = [
         isCurrent: true,
         description: "• Leading the development of web applications using Next.js and React\n• Implementing RESTful APIs with Node.js and Express\n• Managing PostgreSQL databases and optimizing queries\n• Collaborating with cross-functional teams to deliver features",
         order: 1,
-        skills: ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL"],
     },
     {
         companyName: "Digital Agency",
@@ -164,7 +163,6 @@ const experiencesData = [
         isCurrent: false,
         description: "• Developed responsive and interactive web interfaces\n• Worked with modern JavaScript frameworks including React and Vue.js\n• Implemented pixel-perfect designs from Figma mockups\n• Optimized website performance and loading times",
         order: 2,
-        skills: ["React", "Vue.js", "JavaScript", "CSS", "Figma"],
     },
     {
         companyName: "Freelance",
@@ -179,7 +177,6 @@ const experiencesData = [
         isCurrent: false,
         description: "• Built custom websites for small businesses and individuals\n• Provided technical consultation and support\n• Managed multiple projects simultaneously with tight deadlines",
         order: 3,
-        skills: ["HTML", "CSS", "JavaScript", "WordPress", "PHP"],
     },
     {
         companyName: "University Tech Lab",
@@ -194,7 +191,6 @@ const experiencesData = [
         isCurrent: false,
         description: "• Assisted in developing internal web tools\n• Learned agile development methodologies\n• Participated in code reviews and team meetings",
         order: 4,
-        skills: ["HTML", "CSS", "JavaScript", "Git"],
     },
 ];
 
@@ -208,7 +204,6 @@ async function main() {
 
     // Clear existing data
     console.log('🗑️  Clearing existing data...');
-    await prisma.experienceSkill.deleteMany();
     await prisma.experience.deleteMany();
     await prisma.projectTag.deleteMany();
     await prisma.project.deleteMany();
@@ -270,20 +265,11 @@ async function main() {
         });
     }
 
-    // Create experiences with skills
+    // Create experiences
     console.log('💼 Creating experiences...');
     for (const experienceData of experiencesData) {
-        const { skills, ...experienceFields } = experienceData;
-
         await prisma.experience.create({
-            data: {
-                ...experienceFields,
-                skills: {
-                    create: skills.map(skillName => ({
-                        skillName,
-                    })),
-                },
-            },
+            data: experienceData,
         });
     }
 

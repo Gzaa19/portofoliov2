@@ -21,13 +21,10 @@ export const LOCATION_TYPES = {
     remote: "Remote",
 } as const;
 
-// GET - Fetch all experiences with skills
+// GET - Fetch all experiences
 export async function GET() {
     try {
         const experiences = await prisma.experience.findMany({
-            include: {
-                skills: true,
-            },
             orderBy: [
                 { isCurrent: 'desc' },
                 { startDate: 'desc' },
@@ -35,13 +32,7 @@ export async function GET() {
             ],
         });
 
-        // Transform the data to include skills as array of strings
-        const transformedExperiences = experiences.map((exp) => ({
-            ...exp,
-            skills: exp.skills.map((s) => s.skillName),
-        }));
-
-        return NextResponse.json(transformedExperiences);
+        return NextResponse.json(experiences);
     } catch (error) {
         console.error("Failed to fetch experiences:", error);
         return NextResponse.json(
@@ -69,7 +60,6 @@ export async function POST(request: Request) {
             description,
             order,
             isActive,
-            skills,
         } = body;
 
         // Validate required fields
@@ -102,34 +92,10 @@ export async function POST(request: Request) {
             },
         });
 
-        // Handle skills if provided
-        if (skills && Array.isArray(skills) && skills.length > 0) {
-            await prisma.experienceSkill.createMany({
-                data: skills.map((skillName: string) => ({
-                    experienceId: experience.id,
-                    skillName,
-                })),
-            });
-        }
-
-        // Fetch the complete experience with skills
-        const completeExperience = await prisma.experience.findUnique({
-            where: { id: experience.id },
-            include: {
-                skills: true,
-            },
-        });
-
-        // Transform for response
-        const transformedExperience = completeExperience ? {
-            ...completeExperience,
-            skills: completeExperience.skills.map((s) => s.skillName),
-        } : null;
-
         revalidatePath('/');
         revalidatePath('/about');
 
-        return NextResponse.json(transformedExperience, { status: 201 });
+        return NextResponse.json(experience, { status: 201 });
     } catch (error) {
         console.error("Failed to create experience:", error);
         return NextResponse.json(

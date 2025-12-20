@@ -63,3 +63,7 @@ export async function deleteImage(publicId: string) {
         throw error;
     }
 }
+
+// Re-export getDownloadUrl from cloudinaryUtils for backward compatibility
+export { getDownloadUrl } from './cloudinaryUtils';
+
