@@ -5,16 +5,17 @@ import { techStackOptions } from "@/lib/techStackOptions";
 import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
 import { MdSearch, MdClose, MdStar, MdStarOutline } from "react-icons/md";
-import type { Project } from "@/types/types";
+import type { Project, ProjectCategory } from "@/types/types";
 
 interface ProjectsManagerProps {
     initialProjects: Project[];
+    categories: ProjectCategory[];
 }
 
 // Get all Si icon names from the library
 const allSiIconNames = Object.keys(SiIcons).filter(key => key.startsWith('Si'));
 
-export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
+export function ProjectsManager({ initialProjects, categories }: ProjectsManagerProps) {
     const [projects, setProjects] = useState<Project[]>(initialProjects);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +29,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
         link: "",
         github: "",
         featured: false,
+        categoryId: "",
     });
     const [showIconSearch, setShowIconSearch] = useState(false);
     const [iconSearch, setIconSearch] = useState("");
@@ -76,6 +78,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             link: "",
             github: "",
             featured: false,
+            categoryId: "",
         });
         setShowIconSearch(false);
         setIconSearch("");
@@ -102,6 +105,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
             link: project.link || "",
             github: project.github || "",
             featured: project.featured,
+            categoryId: project.categoryId || "",
         });
         setShowIconSearch(false);
         setIconSearch("");
@@ -239,6 +243,7 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Title</th>
+                                <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Category</th>
                                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Tech Stack</th>
                                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">Featured</th>
                                 <th className="px-6 py-4 text-right text-sm font-medium text-gray-600">Actions</th>
@@ -252,6 +257,15 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                                         <div className="text-gray-500 text-sm truncate max-w-xs">
                                             {project.description}
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {project.category ? (
+                                            <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                                                {project.category.name}
+                                            </span>
+                                        ) : (
+                                            <span className="text-gray-400 text-xs">-</span>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-wrap gap-2">
@@ -363,6 +377,22 @@ export function ProjectsManager({ initialProjects }: ProjectsManagerProps) {
                                         placeholder="Project description..."
                                         required
                                     />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                    <select
+                                        value={formData.categoryId}
+                                        onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                                        className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                    >
+                                        <option value="">No Category</option>
+                                        {categories.map((category) => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.name}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 {/* Image Upload */}

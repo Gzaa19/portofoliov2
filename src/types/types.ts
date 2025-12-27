@@ -5,6 +5,15 @@
 // ==========================================
 // Project Types
 // ==========================================
+export interface ProjectCategory {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string | null;
+    color?: string | null;
+    iconName?: string | null;
+}
+
 export interface Project {
     id: string;
     slug: string;
@@ -16,6 +25,8 @@ export interface Project {
     featured: boolean;
     createdAt: Date;
     updatedAt: Date;
+    categoryId?: string | null;
+    category?: ProjectCategory | null;
     tags: ProjectTag[];
 }
 
@@ -35,6 +46,7 @@ export interface CreateProjectInput {
     github?: string;
     image?: string;
     featured?: boolean;
+    categoryId?: string;
     tags: string[];
 }
 
@@ -46,6 +58,7 @@ export interface UpdateProjectInput {
     github?: string | null;
     image?: string | null;
     featured?: boolean;
+    categoryId?: string | null;
     tags?: string[];
 }
 

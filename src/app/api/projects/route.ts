@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
 
-// GET - Fetch all projects with tags
+// GET - Fetch all projects with tags and category
 export async function GET() {
     try {
         const projects = await prisma.project.findMany({
@@ -12,6 +12,7 @@ export async function GET() {
                         tag: true,
                     },
                 },
+                category: true,
             },
             orderBy: [
                 { featured: 'desc' },
@@ -45,7 +46,20 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { slug, title, description, link, github, image, featured, tags } = body;
+        const { slug, title, description, link, github, image, featured, tags, categoryId } = body;
+
+        // Validate categoryId if provided
+        if (categoryId) {
+            const categoryExists = await prisma.projectCategory.findUnique({
+                where: { id: categoryId },
+            });
+            if (!categoryExists) {
+                return NextResponse.json(
+                    { error: "Invalid category ID" },
+                    { status: 400 }
+                );
+            }
+        }
 
         // Create the project
         const project = await prisma.project.create({
@@ -57,6 +71,7 @@ export async function POST(request: Request) {
                 github: github || null,
                 image: image || null,
                 featured: featured || false,
+                categoryId: categoryId || null,
             },
         });
 
@@ -99,7 +114,7 @@ export async function POST(request: Request) {
             }
         }
 
-        // Fetch the complete project with tags
+        // Fetch the complete project with tags and category
         const completeProject = await prisma.project.findUnique({
             where: { id: project.id },
             include: {
@@ -108,6 +123,7 @@ export async function POST(request: Request) {
                         tag: true,
                     },
                 },
+                category: true,
             },
         });
 
@@ -123,3 +139,4 @@ export async function POST(request: Request) {
         );
     }
 }
+

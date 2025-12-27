@@ -19,6 +19,10 @@ export type { HeroSettings, HeroStatus } from "./heroData";
 export { getFeaturedProjects, getAllProjects, getProjectBySlug } from "./projectsData";
 export type { FeaturedProject, ProjectWithTags, ProjectTag } from "./projectsData";
 
+// Categories data
+export { getAllCategories } from "./categoriesData";
+export type { ProjectCategoryData } from "./categoriesData";
+
 // Profile data
 export { getProfile, getProfileData } from "./profileData";
 export type { Profile, ProfileData } from "./profileData";

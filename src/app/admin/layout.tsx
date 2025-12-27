@@ -12,7 +12,8 @@ import {
     MdChevronRight,
     MdBuildCircle,
     MdPerson,
-    MdStar
+    MdStar,
+    MdCategory
 } from "react-icons/md";
 import { IconType } from "react-icons";
 
@@ -30,6 +31,7 @@ const navItems: NavItem[] = [
     { name: "Hero", href: "/admin/hero", icon: MdStar },
     { name: "About", href: "/admin/about", icon: MdPerson },
     { name: "Projects", href: "/admin/projects", icon: MdFolder },
+    { name: "Categories", href: "/admin/categories", icon: MdCategory },
     { name: "Toolbox", href: "/admin/toolbox", icon: MdBuildCircle },
     { name: "Social Links", href: "/admin/social-links", icon: MdLink },
     { name: "Location", href: "/admin/location", icon: MdLocationOn },

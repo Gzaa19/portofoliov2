@@ -18,3 +18,4 @@ export type {
     ToolboxCategory,
     ToolboxItem,
 } from '@/types/types';
+export { CategoriesManager } from "./CategoriesManager";

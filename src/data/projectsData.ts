@@ -24,6 +24,12 @@ export interface ProjectTag {
     color: string | null;
 }
 
+export interface ProjectCategory {
+    id: string;
+    name: string;
+    slug: string;
+}
+
 export interface ProjectWithTags {
     id: string;
     slug: string;
@@ -35,6 +41,8 @@ export interface ProjectWithTags {
     featured: boolean;
     createdAt: Date;
     updatedAt: Date;
+    categoryId: string | null;
+    category: ProjectCategory | null;
     tags: ProjectTag[];
 }
 
@@ -58,6 +66,7 @@ export async function getFeaturedProjects(): Promise<FeaturedProject[]> {
                         tag: true,
                     },
                 },
+                category: true,
             },
         });
 
@@ -77,7 +86,7 @@ export async function getFeaturedProjects(): Promise<FeaturedProject[]> {
 }
 
 /**
- * Fetch all projects with their tags from the database
+ * Fetch all projects with their tags and category from the database
  */
 export async function getAllProjects(): Promise<ProjectWithTags[]> {
     try {
@@ -88,6 +97,7 @@ export async function getAllProjects(): Promise<ProjectWithTags[]> {
                         tag: true,
                     },
                 },
+                category: true,
             },
             orderBy: {
                 createdAt: 'desc',
@@ -105,6 +115,12 @@ export async function getAllProjects(): Promise<ProjectWithTags[]> {
             featured: project.featured,
             createdAt: project.createdAt,
             updatedAt: project.updatedAt,
+            categoryId: project.categoryId,
+            category: project.category ? {
+                id: project.category.id,
+                name: project.category.name,
+                slug: project.category.slug,
+            } : null,
             tags: project.tags.map((pt) => pt.tag),
         }));
     } catch (error) {
@@ -126,6 +142,7 @@ export async function getProjectBySlug(slug: string): Promise<ProjectWithTags | 
                         tag: true,
                     },
                 },
+                category: true,
             },
         });
 
@@ -142,6 +159,12 @@ export async function getProjectBySlug(slug: string): Promise<ProjectWithTags | 
             featured: project.featured,
             createdAt: project.createdAt,
             updatedAt: project.updatedAt,
+            categoryId: project.categoryId,
+            category: project.category ? {
+                id: project.category.id,
+                name: project.category.name,
+                slug: project.category.slug,
+            } : null,
             tags: project.tags.map((pt) => pt.tag),
         };
     } catch (error) {

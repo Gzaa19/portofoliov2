@@ -1,11 +1,12 @@
 import { PageLayout, PageHeader, EmptyState } from "@/components/ui";
-import { ProjectsGrid } from "@/components/projects";
-import { getAllProjects } from "@/data";
+import { ProjectsFilter } from "@/components/projects";
+import { getAllProjects, getAllCategories } from "@/data";
 
 export const revalidate = 60;
 
 export default async function ProjectsPage() {
     const projects = await getAllProjects();
+    const categories = await getAllCategories();
 
     return (
         <PageLayout showParticles={false}>
@@ -17,9 +18,9 @@ export default async function ProjectsPage() {
                 />
             </div>
 
-            {/* Projects Grid */}
+            {/* Projects Filter & Grid */}
             {projects.length > 0 ? (
-                <ProjectsGrid projects={projects} className="pointer-events-auto" />
+                <ProjectsFilter projects={projects} categories={categories} />
             ) : (
                 <EmptyState
                     message="Belum ada project yang ditambahkan."

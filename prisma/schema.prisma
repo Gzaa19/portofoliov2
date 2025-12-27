@@ -14,6 +14,27 @@ datasource db {
 }
 
 // ==========================================
+// ProjectCategory Model - Kategori untuk projects (e.g., "Web Development", "Mobile App")
+// ==========================================
+model ProjectCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "Web Development"
+  slug        String   @unique // URL-friendly version (e.g., "web-development")
+  description String?  @db.Text // Deskripsi kategori
+  color       String? // Hex color for the category (e.g., "#3B82F6")
+  iconName    String? // Icon name dari react-icons (e.g., "FaGlobe")
+  order       Int      @default(0) // Urutan tampil
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relasi ke projects
+  projects Project[]
+
+  @@map("project_categories")
+}
+
+// ==========================================
 // Project Model - Untuk menyimpan data project
 // ==========================================
 model Project {
@@ -28,6 +49,10 @@ model Project {
   order       Int      @default(0) // Urutan tampil
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // Relasi ke category (optional)
+  categoryId String?
+  category   ProjectCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   // Relasi ke tags
   tags ProjectTag[]

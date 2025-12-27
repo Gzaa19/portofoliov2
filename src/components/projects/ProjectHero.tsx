@@ -14,6 +14,7 @@ interface ProjectHeroProps {
     title: string;
     image?: string | null;
     tags: ProjectTag[];
+    category?: { name: string; slug: string } | null;
     className?: string;
 }
 
@@ -21,7 +22,7 @@ interface ProjectHeroProps {
  * ProjectHero - Hero section for project detail page
  * Shows project image with overlay and title
  */
-export function ProjectHero({ title, image, tags, className }: ProjectHeroProps) {
+export function ProjectHero({ title, image, tags, category, className }: ProjectHeroProps) {
     return (
         <div className={cn("relative rounded-3xl overflow-hidden mb-10 group", className)}>
             {/* Glassmorphism overlay */}

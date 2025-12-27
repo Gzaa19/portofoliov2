@@ -6,6 +6,7 @@ import {
     ProjectDescription,
     TechStackCard,
     ProjectLinksCard,
+    ProjectCategoryCard,
 } from "@/components/projects";
 
 export const revalidate = 60;
@@ -34,9 +35,11 @@ export default async function ProjectDetailPage({ params }: Props) {
             <BackButton href="/projects" label="Back to Projects" className="mb-8" />
 
             {/* Hero Section */}
+            {/* Hero Section */}
             <ProjectHero
                 title={project.title}
                 image={project.image}
+                category={project.category}
                 tags={project.tags}
             />
 
@@ -48,8 +51,9 @@ export default async function ProjectDetailPage({ params }: Props) {
                     className="lg:col-span-2"
                 />
 
-                {/* Sidebar - Tech Stack & Links */}
+                {/* Sidebar - Category, Tech Stack & Links */}
                 <div className="space-y-6">
+                    <ProjectCategoryCard category={project.category} />
                     <TechStackCard tags={project.tags} />
                     <ProjectLinksCard
                         demoUrl={project.link}

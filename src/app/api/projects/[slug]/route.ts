@@ -18,6 +18,7 @@ export async function GET(
                         tag: true,
                     },
                 },
+                category: true,
             },
         });
 
@@ -58,7 +59,20 @@ export async function PUT(
     try {
         const { slug } = await params;
         const body = await request.json();
-        const { title, description, link, github, image, featured, tags, newSlug } = body;
+        const { title, description, link, github, image, featured, tags, newSlug, categoryId } = body;
+
+        // Validate categoryId if provided
+        if (categoryId !== undefined && categoryId !== null) {
+            const categoryExists = await prisma.projectCategory.findUnique({
+                where: { id: categoryId },
+            });
+            if (!categoryExists) {
+                return NextResponse.json(
+                    { error: "Invalid category ID" },
+                    { status: 400 }
+                );
+            }
+        }
 
         // Find the project
         const existingProject = await prisma.project.findUnique({
@@ -83,6 +97,7 @@ export async function PUT(
                 github: github || null,
                 image: image || null,
                 featured: featured || false,
+                ...(categoryId !== undefined && { categoryId: categoryId || null }),
             },
         });
 
@@ -131,7 +146,7 @@ export async function PUT(
             }
         }
 
-        // Fetch the complete project with tags
+        // Fetch the complete project with tags and category
         const completeProject = await prisma.project.findUnique({
             where: { id: updatedProject.id },
             include: {
@@ -140,6 +155,7 @@ export async function PUT(
                         tag: true,
                     },
                 },
+                category: true,
             },
         });
 

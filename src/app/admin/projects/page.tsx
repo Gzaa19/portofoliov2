@@ -9,6 +9,7 @@ async function getProjects() {
                     tag: true,
                 },
             },
+            category: true,
         },
         orderBy: { createdAt: 'desc' },
     });
@@ -24,6 +25,15 @@ async function getProjects() {
         featured: project.featured,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt,
+        categoryId: project.categoryId,
+        category: project.category ? {
+            id: project.category.id,
+            name: project.category.name,
+            slug: project.category.slug,
+            description: project.category.description,
+            color: project.category.color,
+            iconName: project.category.iconName,
+        } : null,
         tags: project.tags.map((pt) => ({
             id: pt.tag.id,
             name: pt.tag.name,
@@ -33,8 +43,16 @@ async function getProjects() {
     }));
 }
 
+async function getCategories() {
+    return prisma.projectCategory.findMany({
+        where: { isActive: true },
+        orderBy: { order: 'asc' },
+    });
+}
+
 export default async function AdminProjectsPage() {
     const projects = await getProjects();
+    const categories = await getCategories();
 
-    return <ProjectsManager initialProjects={projects} />;
+    return <ProjectsManager initialProjects={projects} categories={categories} />;
 }
