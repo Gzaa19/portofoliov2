@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import * as SiIcons from "react-icons/si";
 import { IconType } from "react-icons";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { GlowCard } from "@/components/ui";
 import { GeminiStarIcon } from "@/components/GeminiStarIcon";
@@ -12,14 +14,62 @@ interface ToolboxSectionProps {
     categories?: ToolboxCategory[];
 }
 
+// Helper function to determine if a color is too light or too dark
+const getColorBrightness = (color: string): number => {
+    // Remove # if present
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    // Calculate brightness (0-255)
+    return (r * 299 + g * 587 + b * 114) / 1000;
+};
+
+// Get theme-aware color for icons
+const getThemeAwareColor = (originalColor: string, isDarkMode: boolean): string => {
+    const brightness = getColorBrightness(originalColor);
+
+    // If dark mode and color is too light (white/near-white), use dark color
+    // Brightness > 240 means very light colors like #FFFFFF
+    if (!isDarkMode && brightness > 240) {
+        return '#1a1a2e'; // Dark color for light mode
+    }
+
+    // If light mode and color is too dark (black/near-black), use light color
+    // Brightness < 40 means very dark colors like #000000, #181717, #092E20
+    if (isDarkMode && brightness < 40) {
+        return '#ffffff'; // White color for dark mode
+    }
+
+    return originalColor;
+};
+
 /**
  * ToolboxSection - Displays tech stack organized by categories
  * Header outside, each category has its own GlowCard container
  */
 export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    // Only run on client after hydration
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Determine dark mode only after mounting to avoid hydration mismatch
+    const isDarkMode = mounted && resolvedTheme === 'dark';
+
     const getIcon = (iconName: string): IconType | null => {
         const icons = SiIcons as Record<string, IconType>;
         return icons[iconName] || null;
+    };
+
+    // Get the display color for an icon
+    const getDisplayColor = (originalColor: string): string => {
+        // Before hydration, return original color to match SSR
+        if (!mounted) return originalColor;
+        return getThemeAwareColor(originalColor, isDarkMode);
     };
 
     if (categories.length === 0) {
@@ -93,7 +143,7 @@ export function ToolboxSection({ categories = [] }: ToolboxSectionProps) {
                                                 {IconComp ? (
                                                     <IconComp
                                                         className="w-8 h-8 md:w-12 md:h-12 mb-2 transition-transform group-hover:scale-110"
-                                                        style={{ color: item.color }}
+                                                        style={{ color: getDisplayColor(item.color) }}
                                                     />
                                                 ) : (
                                                     <div
